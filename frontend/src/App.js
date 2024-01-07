@@ -1,10 +1,17 @@
 import "./App.css";
 import React, { useState } from "react";
 import { PlayerContext } from "./utils/context.js";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Creation from "./utils/creation.js";
+import JoinGame from "./utils/joingame.js";
+import GTSGame from "./utils/gtsgame.js";
 
-// Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game
+// Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
 function App() {
   const [name, setName] = React.useState("");
@@ -30,8 +37,22 @@ function App() {
       >
         <Router>
           <Routes>
-            <Route path="/" element={<Creation setName={setName} />} />
-            <Route path="/game/:gameid" element={<p> TODO </p>} />
+            <Route path="/" element={<Creation setName={setName} setDidRedirect={setDidRedirect} />} />
+            <Route
+              path="/game/:gameid"
+              element={
+                <React.Fragment>
+                  {didRedirect ? (
+                    <>
+                      <JoinGame userName={name} isHost={true} />
+                      <GTSGame myUserName={name} />
+                    </>
+                  ) : (
+                    <p> TODO1 </p>
+                  )}
+                </React.Fragment>
+              }
+            />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Router>

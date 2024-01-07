@@ -2,6 +2,7 @@ import React from "react";
 import { PlayerContext } from "./context";
 import { Navigate } from 'react-router-dom'
 import { v4 as uuidv4 } from "uuid";
+const socket  = require('../connection/socket').socket
 
 class CreateGame extends React.Component {
   state = {
@@ -24,13 +25,14 @@ class CreateGame extends React.Component {
   handleClick = () => {
 
     if (this.state.inputText.match(/^\s*$/)) {
-        alert("Please enter a name!")
-    } 
-    else {
-        this.send();
-        this.setState({
-            usernameAlreadyEntered: true
-        })
+      alert("Please enter a name!")
+    } else {
+      this.send();
+      this.setState({
+        usernameAlreadyEntered: true
+      });
+      this.props.setUserName(this.state.inputText);
+      this.props.setDidRedirect(true);
     }
 
     
@@ -43,6 +45,8 @@ class CreateGame extends React.Component {
     this.setState({
       gameId: newGameRoomId,
     });
+
+    socket.emit('createNewGame', newGameRoomId)
   };
 
   render() {
@@ -87,7 +91,8 @@ const Creation = (props) => {
   return (
     <CreateGame
       didRedirect={player.playerDidRedirect}
-      setUserName={props.setUserName}
+      setUserName={props.setName}
+      setDidRedirect={props.setDidRedirect}
     />
   );
 };
