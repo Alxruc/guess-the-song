@@ -1,6 +1,4 @@
-// TODO Game joining logic
-
-import React, {useEffect} from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 const socket  = require('../connection/socket').socket
 
@@ -25,7 +23,7 @@ function JoinGame(props) {
 
     return(
         <div>
-            <p> Is {props.userName} the host? {props.isHost} </p>
+            <p> Is {props.userName} the host? {props.isHost.toString()} </p>
         </div>
     )
 }

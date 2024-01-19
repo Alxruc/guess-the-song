@@ -44,15 +44,15 @@ const initializeGame = (sio, socket) => {
 
 function playerJoinsGame(idData) {
     console.log("Player " + idData.userName + " is attempting to join game: " + idData.gameId);
-    // var socket = this
+    var socket = this
     
-    // // Look up the room ID in the Socket.IO manager object.
-    // var room = io.sockets.adapter.rooms[idData.gameId]
+    // Look up the room ID in the Socket.IO manager object.
+    var room = io.sockets.adapter.rooms[idData.gameId]
 
-    // socket.join(idData.gameId);
+    socket.join(idData.gameId);
 
-    // //TODO conditions for starting the game, this is currently only for testing
-    // io.sockets.in(idData.gameId).emit('start game', idData.userName)
+    //TODO conditions for starting the game, this is currently only for testing
+    io.sockets.in(idData.gameId).emit('start game', idData.userName)
 }
 
 function onDisconnect() {

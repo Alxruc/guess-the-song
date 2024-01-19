@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React from "react";
 import { PlayerContext } from "./utils/context.js";
 import {
   BrowserRouter as Router,
@@ -10,6 +10,7 @@ import {
 import Creation from "./utils/creation.js";
 import JoinGame from "./utils/joingame.js";
 import GTSGame from "./utils/gtsgame.js";
+import JoinRoom from "./utils/joinroom.js";
 
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
@@ -48,7 +49,7 @@ function App() {
                       <GTSGame myUserName={name} />
                     </>
                   ) : (
-                    <p> TODO1 </p>
+                    <JoinRoom/>
                   )}
                 </React.Fragment>
               }
