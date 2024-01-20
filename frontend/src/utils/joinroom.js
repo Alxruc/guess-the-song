@@ -1,6 +1,6 @@
 import React from 'react';
 import JoinGame from './joingame';
-import GTSGame from './gtsgame';
+import GTSGameSelector from './gtsgameselector';
 
 class JoinRoom extends React.Component {
     state = {
@@ -36,7 +36,7 @@ class JoinRoom extends React.Component {
                 this.state.usernameAlreadyEntered ? 
                 <React.Fragment>
                     <JoinGame userName = {this.state.inputText} isHost = {false}/>
-                    <GTSGame myUserName = {this.state.inputText}/>
+                    <GTSGameSelector myUserName = {this.state.inputText}/>
                 </React.Fragment>
             :
                <div>

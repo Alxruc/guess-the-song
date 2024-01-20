@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import Creation from "./utils/creation.js";
 import JoinGame from "./utils/joingame.js";
-import GTSGame from "./utils/gtsgame.js";
+import GTSGameSelector from "./utils/gtsgameselector.js";
 import JoinRoom from "./utils/joinroom.js";
 
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
@@ -46,7 +46,7 @@ function App() {
                   {didRedirect ? (
                     <>
                       <JoinGame userName={name} isHost={true} />
-                      <GTSGame myUserName={name} />
+                      <GTSGameSelector myUserName={name} />
                     </>
                   ) : (
                     <JoinRoom/>
