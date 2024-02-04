@@ -38,6 +38,7 @@ const initializeGame = (sio, socket) => {
         "createNewGame": createNewGame,
         "playerJoinGame": playerJoinsGame,
         "request username": requestUserName,
+        "start game": startGame,
         "recieved username": recievedUserName
     };
 
@@ -53,10 +54,7 @@ function getExistingPlayers(gameId) {
 
 function playerJoinsGame(idData) {
     console.log("Player " + idData.userName + " is attempting to join game: " + idData.gameId);
-    var socket = this
-    
-    // Look up the room ID in the Socket.IO manager object.
-    var room = io.sockets.adapter.rooms[idData.gameId]
+    var socket = this;
 
     socket.join(idData.gameId);
 
@@ -68,7 +66,7 @@ function playerJoinsGame(idData) {
 
     const existingPlayers = getExistingPlayers(idData.gameId);
 
-    io.sockets.in(idData.gameId).emit('opponent-joined', existingPlayers)
+    io.sockets.in(idData.gameId).emit('opponent joined', existingPlayers)
 }
 
 function onDisconnect() {
@@ -78,9 +76,17 @@ function onDisconnect() {
     gamesInSession.splice(gamesInSession.indexOf(socket), 1);
 }
 
-function newSong() {
-    var socket = this
-    //TODO
+function startGame(idData) {
+    var socket = this;
+
+    socket.broadcast.to(idData.gameId).emit('game started');
+}
+
+function newSong(idData) {
+    var socket = this;
+    console.log("New song: " + idData.song.name + " for game: " + idData.gameId)
+    
+    socket.broadcast.to(idData.gameId).emit('song selected', idData);
 }
 
 function newGuess() {

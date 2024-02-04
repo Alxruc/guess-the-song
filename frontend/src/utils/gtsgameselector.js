@@ -37,7 +37,17 @@ class GTSGameSelector extends React.Component {
   }
 
   componentDidMount() {
-    this.audio.current.volume = 0.05;
+    this.setState({ username: this.props.username });
+    this.setState({ host: this.props.host });
+
+    socket.on("song selected", (data) => {
+      console.log("New song received");
+      console.log(data);
+      this.setState({
+        song: data.song,
+        isOtherComponentVisible: true,
+      });
+    });
   }
 
   handleRowClick = (index) => {
@@ -91,6 +101,12 @@ class GTSGameSelector extends React.Component {
       this.setState({
         isOtherComponentVisible: true,
       });
+      const idData = {
+        gameId: this.props.gameid,
+        userName: this.props.username,
+        song: this.state.song,
+      };
+      socket.emit("new song", idData);
     } else {
       alert("Please select a song!");
     }
@@ -101,8 +117,9 @@ class GTSGameSelector extends React.Component {
       <React.Fragment>
         {this.state.isOtherComponentVisible ? (
           <GTSGame {...this.state} />
-        ) : (
+        ) : this.state.host ? (
           <div>
+            <h1> Search for a song! </h1>
             <div>
               {this.state.song && (
                 <button className="btn btn-primary" onClick={this.handleSubmit}>
@@ -114,6 +131,7 @@ class GTSGameSelector extends React.Component {
               <audio
                 ref={this.audio}
                 src={this.state.song ? this.state.song.preview_url : ""}
+                onLoadedMetadata={() => { if (this.audio.current) this.audio.current.volume = 0.05; }}
               ></audio>
 
               {this.state.song && this.state.song.preview_url && (
@@ -156,6 +174,10 @@ class GTSGameSelector extends React.Component {
               </button>
             </div>
           </div>
+        ) : (
+          <div>
+            <h1>Waiting for the host to select a song...</h1>
+          </div>
         )}
       </React.Fragment>
     );
@@ -163,6 +185,8 @@ class GTSGameSelector extends React.Component {
 }
 
 const SelectorWrapper = (props) => {
+  const { gameid } = useParams();
+
   const [accessToken, setAccessToken] = useState("");
   const [opponentSocketIDs, setOpponentSocketIDs] = useState([]);
   const [opponentUserNames, setOpponentUserNames] = useState([]);
@@ -179,38 +203,63 @@ const SelectorWrapper = (props) => {
   }, []);
 
   useEffect(() => {
-      socket.on("opponent-joined", (data) => {
-        console.log("Opponents joined");
-        console.log(data);
-        const userNames = data.filter(player => player.socketId !== socket.id).map(player => player.userName);
-        const socketIDs = data.filter(player => player.socketId !== socket.id).map(player => player.socketId);
-        setOpponentUserNames(userNames);
-        setOpponentSocketIDs(socketIDs);
-      });
+    socket.on("opponent joined", (data) => {
+      console.log("Opponents joined");
+      console.log(data);
+      const userNames = data
+        .filter((player) => player.socketId !== socket.id)
+        .map((player) => player.userName);
+      const socketIDs = data
+        .filter((player) => player.socketId !== socket.id)
+        .map((player) => player.socketId);
+      setOpponentUserNames(userNames);
+      setOpponentSocketIDs(socketIDs);
+    });
   }, []);
 
+  useEffect(() => {
+    socket.on("game started", (idData) => {
+      setDidStart(true);
+    });
+  }, []);
 
   return (
     <div>
       {didStart ? (
-        <GTSGameSelector accessToken={accessToken} host={props.isHost} username={props.myUserName}/>
+          <GTSGameSelector
+            accessToken={accessToken}
+            host={props.isHost}
+            username={props.myUserName}
+            gameid={gameid}
+          />
       ) : (
         <React.Fragment>
           <div>
-            <h1>Waiting for other players</h1>
+            <h2>
+              Current opponents:{" "}
+              {opponentUserNames &&
+                opponentUserNames.length > 0 &&
+                opponentUserNames.join(", ")}
+            </h2>
           </div>
           <div>
-            <h2>Current opponents: {opponentUserNames && opponentUserNames.length > 0 && opponentUserNames.join(", ")}</h2>
-          </div>
-          <div>
-            {props.isHost && opponentSocketIDs && opponentSocketIDs.length > 1 && (
-              <button
-                className="btn btn-primary"
-                onClick={() => setDidStart(true)}
-              >
-                Start Game
-              </button>
-            )}
+            {props.isHost &&
+              opponentSocketIDs &&
+              opponentSocketIDs.length > 1 && (
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    const idData = {
+                      gameId: gameid,
+                      userName: props.myUserName,
+                    };
+                    setDidStart(true);
+                    socket.emit("start game", idData);
+                  }}
+                >
+                  Start Game
+                </button>
+              )}
           </div>
         </React.Fragment>
       )}

@@ -34,13 +34,6 @@ function JoinGame(props) {
     }
   }, []);
 
-  return (
-    <div>
-      <p>
-        Waiting for more players...
-      </p>
-    </div>
-  );
 }
 
 export default JoinGame;
