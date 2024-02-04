@@ -6,6 +6,9 @@ var io
 var gameSocket
 // gamesInSession stores an array of all active socket connections
 var gamesInSession = []
+// This object will hold the players for each game
+var playersInGames = {};
+
 
 
 const registerSocketEvents = (socket, events) => {
@@ -42,6 +45,12 @@ const initializeGame = (sio, socket) => {
     registerSocketEvents(gameSocket, events);
 };
 
+
+function getExistingPlayers(gameId) {
+    // Return the players for the given game ID
+    return playersInGames[gameId] || [];
+}
+
 function playerJoinsGame(idData) {
     console.log("Player " + idData.userName + " is attempting to join game: " + idData.gameId);
     var socket = this
@@ -51,8 +60,15 @@ function playerJoinsGame(idData) {
 
     socket.join(idData.gameId);
 
-    //TODO conditions for starting the game, this is currently only for testing
-    io.sockets.in(idData.gameId).emit('start game', idData.userName)
+    // Add the player to the playersInGames object
+    if (!playersInGames[idData.gameId]) {
+        playersInGames[idData.gameId] = [];
+    }
+    playersInGames[idData.gameId].push({ userName: idData.userName, socketId: socket.id });
+
+    const existingPlayers = getExistingPlayers(idData.gameId);
+
+    io.sockets.in(idData.gameId).emit('opponent-joined', existingPlayers)
 }
 
 function onDisconnect() {

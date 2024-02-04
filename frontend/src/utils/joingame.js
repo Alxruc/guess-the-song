@@ -1,31 +1,46 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
-const socket  = require('../connection/socket').socket
+import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
+const socket = require("../connection/socket").socket;
 
 const JoinGameRoom = (gameid, userName, isHost) => {
-
-    const idData = {
-        gameId : gameid,
-        userName : userName,
-        isHost: isHost
-    }
-    console.log("Checking client socket connection:" + socket.connected); // should be true
-    socket.emit("playerJoinGame", idData);
-}
+  const idData = {
+    gameId: gameid,
+    userName: userName,
+    isHost: isHost,
+  };
+  console.log("Checking client socket connection:" + socket.connected); // should be true
+  socket.emit("playerJoinGame", idData);
+};
 
 function JoinGame(props) {
-    const { gameid } = useParams();
+  const { gameid } = useParams();
 
-    socket.on('connect', () => {
-        console.log("Checking client socket connection:" + socket.connected); // should be true
-        JoinGameRoom(gameid, props.userName, props.isHost);
-    });
+  const joinGameWhenConnected = () => {
+    if (socket.connected) {
+      JoinGameRoom(gameid, props.userName, props.isHost);
+    } else {
+      console.log("Socket not connected, trying again in 1 second");
+      setTimeout(joinGameWhenConnected, 1000); //retry again in 1 second
+    }
+  };
 
-    return(
-        <div>
-            <p> Is {props.userName} the host? {props.isHost.toString()} </p>
-        </div>
-    )
+  useEffect(() => {
+    if (socket.connected) {
+      joinGameWhenConnected();
+    } else {
+      socket.on("connect", () => {
+        joinGameWhenConnected();
+      });
+    }
+  }, []);
+
+  return (
+    <div>
+      <p>
+        Waiting for more players...
+      </p>
+    </div>
+  );
 }
 
 export default JoinGame;

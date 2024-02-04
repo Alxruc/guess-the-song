@@ -45,8 +45,8 @@ function App() {
                 <React.Fragment>
                   {didRedirect ? (
                     <>
-                      <JoinGame userName={name} isHost={true} />
-                      <GTSGameSelector myUserName={name} />
+                      <JoinGame userName={name} isHost={true}/>
+                      <GTSGameSelector myUserName={name} isHost={true}/>
                     </>
                   ) : (
                     <JoinRoom/>

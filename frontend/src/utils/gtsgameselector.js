@@ -5,6 +5,8 @@ import { FixedSizeList as List } from "react-window";
 import GTSGame from "./gtsgame";
 import "./songselectorstyle.css";
 
+const socket = require("../connection/socket").socket;
+
 const Row = ({ index, style, onRowClick, song }) => (
   <div
     className={index % 2 ? "ListItemOdd" : "ListItemEven"}
@@ -98,7 +100,7 @@ class GTSGameSelector extends React.Component {
     return (
       <React.Fragment>
         {this.state.isOtherComponentVisible ? (
-          <GTSGame {...this.state}/>
+          <GTSGame {...this.state} />
         ) : (
           <div>
             <div>
@@ -109,7 +111,10 @@ class GTSGameSelector extends React.Component {
               )}
             </div>
             <div>
-              <audio ref={this.audio} src={this.state.song ? this.state.song.preview_url : ''}></audio>
+              <audio
+                ref={this.audio}
+                src={this.state.song ? this.state.song.preview_url : ""}
+              ></audio>
 
               {this.state.song && this.state.song.preview_url && (
                 <button className="btn btn-primary" onClick={this.playAudio}>
@@ -157,8 +162,11 @@ class GTSGameSelector extends React.Component {
   }
 }
 
-const GameWrapper = (props) => {
+const SelectorWrapper = (props) => {
   const [accessToken, setAccessToken] = useState("");
+  const [opponentSocketIDs, setOpponentSocketIDs] = useState([]);
+  const [opponentUserNames, setOpponentUserNames] = useState([]);
+  const [didStart, setDidStart] = useState(false);
 
   useEffect(() => {
     console.log("Fetching Spotify token");
@@ -170,7 +178,44 @@ const GameWrapper = (props) => {
       .catch((error) => console.error("Error:", error));
   }, []);
 
-  return <GTSGameSelector accessToken={accessToken} />;
+  useEffect(() => {
+      socket.on("opponent-joined", (data) => {
+        console.log("Opponents joined");
+        console.log(data);
+        const userNames = data.filter(player => player.socketId !== socket.id).map(player => player.userName);
+        const socketIDs = data.filter(player => player.socketId !== socket.id).map(player => player.socketId);
+        setOpponentUserNames(userNames);
+        setOpponentSocketIDs(socketIDs);
+      });
+  }, []);
+
+
+  return (
+    <div>
+      {didStart ? (
+        <GTSGameSelector accessToken={accessToken} host={props.isHost} username={props.myUserName}/>
+      ) : (
+        <React.Fragment>
+          <div>
+            <h1>Waiting for other players</h1>
+          </div>
+          <div>
+            <h2>Current opponents: {opponentUserNames && opponentUserNames.length > 0 && opponentUserNames.join(", ")}</h2>
+          </div>
+          <div>
+            {props.isHost && opponentSocketIDs && opponentSocketIDs.length > 1 && (
+              <button
+                className="btn btn-primary"
+                onClick={() => setDidStart(true)}
+              >
+                Start Game
+              </button>
+            )}
+          </div>
+        </React.Fragment>
+      )}
+    </div>
+  );
 };
 
-export default GameWrapper;
+export default SelectorWrapper;
