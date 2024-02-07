@@ -116,7 +116,7 @@ class GTSGameSelector extends React.Component {
     return (
       <React.Fragment>
         {this.state.isOtherComponentVisible ? (
-          <GTSGame {...this.state} />
+          <GTSGame {...this.state} {...this.props}/>
         ) : this.state.host ? (
           <div>
             <h1> Search for a song! </h1>
@@ -215,7 +215,7 @@ const SelectorWrapper = (props) => {
       setOpponentUserNames(userNames);
       setOpponentSocketIDs(socketIDs);
     });
-  }, []);
+  });
 
   useEffect(() => {
     socket.on("game started", (idData) => {
@@ -231,6 +231,7 @@ const SelectorWrapper = (props) => {
             host={props.isHost}
             username={props.myUserName}
             gameid={gameid}
+            opponentUserNames={opponentUserNames}
           />
       ) : (
         <React.Fragment>

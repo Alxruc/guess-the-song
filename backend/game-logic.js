@@ -39,7 +39,9 @@ const initializeGame = (sio, socket) => {
         "playerJoinGame": playerJoinsGame,
         "request username": requestUserName,
         "start game": startGame,
-        "recieved username": recievedUserName
+        "recieved username": recievedUserName,
+        "correct guess": correctGuess,
+        "wrong guess": wrongGuess
     };
 
     // Register the events
@@ -89,9 +91,10 @@ function newSong(idData) {
     socket.broadcast.to(idData.gameId).emit('song selected', idData);
 }
 
-function newGuess() {
+function newGuess(idData) {
     var socket = this
-    //TODO
+    console.log("New guess for game: " + idData.gameId + " from: " + idData.userName);
+    socket.broadcast.to(idData.gameId).emit('player guessed', idData);
 }
 
 function createNewGame(gameId) {
@@ -111,6 +114,16 @@ function requestUserName() {
 function recievedUserName() {
     var socket = this
     //TODO
+}
+
+function correctGuess(idData) {
+    var socket = this
+    socket.broadcast.to(idData.gameId).emit('player correct', idData);
+}
+
+function wrongGuess(idData) {
+    var socket = this
+    socket.broadcast.to(idData.gameId).emit('player wrong', idData);
 }
 
 module.exports = { initializeGame };

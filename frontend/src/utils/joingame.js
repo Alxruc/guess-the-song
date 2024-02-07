@@ -25,13 +25,7 @@ function JoinGame(props) {
   };
 
   useEffect(() => {
-    if (socket.connected) {
-      joinGameWhenConnected();
-    } else {
-      socket.on("connect", () => {
-        joinGameWhenConnected();
-      });
-    }
+    joinGameWhenConnected();
   }, []);
 
 }
