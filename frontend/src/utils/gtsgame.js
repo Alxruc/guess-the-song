@@ -72,6 +72,7 @@ class GTSGame extends React.Component {
       gameId: this.props.gameid,
       username: this.props.username,
     });
+    this.props.toggleComponentVisibility();
   };
 
   handleWrongGuess = () => {
@@ -147,6 +148,7 @@ const GTSWrapper = (props) => {
     socket.on("player correct", (data) => {
       console.log("Player correct: " + data.username);
       setScores({ ...scores, [data.username]: scores[data.username] + 1 });
+      props.toggleComponentVisibility();
     })
   });
 
@@ -157,7 +159,6 @@ const GTSWrapper = (props) => {
     });
   });
 
-  
 
   useEffect(() => {
     // Initialize scores with your username and opponentUserNames

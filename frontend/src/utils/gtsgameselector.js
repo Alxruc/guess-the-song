@@ -96,6 +96,10 @@ class GTSGameSelector extends React.Component {
     this.audio.current.pause();
   };
 
+  toggleComponentVisibility = () => {
+    this.setState(prevState => ({ isOtherComponentVisible: !prevState.isOtherComponentVisible }));
+  }
+
   handleSubmit = () => {
     if (this.state.song && this.state.song.preview_url !== undefined) {
       this.setState({
@@ -116,7 +120,7 @@ class GTSGameSelector extends React.Component {
     return (
       <React.Fragment>
         {this.state.isOtherComponentVisible ? (
-          <GTSGame {...this.state} {...this.props}/>
+          <GTSGame {...this.state} {...this.props} toggleComponentVisibility={this.toggleComponentVisibility}/>
         ) : this.state.host ? (
           <div>
             <h1> Search for a song! </h1>
