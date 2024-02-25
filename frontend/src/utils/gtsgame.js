@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 const socket = require("../connection/socket").socket;
 
+
 const Timer = ({ seconds, setStarted }) => {
   // initialize timeLeft with the seconds prop
   const [timeLeft, setTimeLeft] = useState(seconds);
@@ -70,7 +71,12 @@ class GTSGame extends React.Component {
     console.log("Correct guess");
     socket.emit("correct guess", {
       gameId: this.props.gameid,
-      username: this.props.username,
+      username: this.props.guessingPlayer,
+    });
+    this.props.setScores({
+      ...this.props.scores,
+      [this.props.guessingPlayer]:
+        this.props.scores[this.props.guessingPlayer] + 1,
     });
     this.props.toggleComponentVisibility();
   };
@@ -79,7 +85,7 @@ class GTSGame extends React.Component {
     console.log("Wrong guess");
     socket.emit("wrong guess", {
       gameId: this.props.gameid,
-      username: this.props.username,
+      username: this.props.guessingPlayer,
     });
     this.props.setSongPlaying(true);
   };
@@ -122,9 +128,11 @@ class GTSGame extends React.Component {
         ) : (
           <div>
             <h1> What is the name of this song?</h1>
-            <button class="btn btn-danger" onClick={this.handleGuessClick}>
-              GUESS!
-            </button>
+            {this.props.songPlaying && (
+              <button class="btn btn-danger" onClick={this.handleGuessClick}>
+                GUESS!
+              </button>
+            )}
           </div>
         )}
       </React.Fragment>
@@ -135,44 +143,57 @@ class GTSGame extends React.Component {
 const GTSWrapper = (props) => {
   const [started, setStarted] = useState(false);
   const [songPlaying, setSongPlaying] = useState(true);
-  const [scores, setScores] = useState({});
+  const [guessingPlayer, setGuessingPlayer] = useState("");
 
   useEffect(() => {
     socket.on("player guessed", (data) => {
       console.log("Player guessed: " + data.username);
       setSongPlaying(false);
+      setGuessingPlayer(data.username);
     });
   });
 
   useEffect(() => {
-    socket.on("player correct", (data) => {
-      console.log("Player correct: " + data.username);
-      setScores({ ...scores, [data.username]: scores[data.username] + 1 });
+    socket.on("player correct", (player) => {
+      props.setScores({
+        ...props.scores,
+        [player.userName]: player.score,
+      });
       props.toggleComponentVisibility();
-    })
-  });
-
-  useEffect(() => {
-    socket.on("player wrong", (data) => {
-      console.log("Player wrong: " + data.username);
+      setGuessingPlayer("");
       setSongPlaying(true);
     });
   });
 
+  useEffect(() => {
+    socket.on("player wrong", (data) => {
+      setSongPlaying(true);
+      setGuessingPlayer("");
+    });
+  });
 
   useEffect(() => {
-    // Initialize scores with your username and opponentUserNames
-    const initialScores = { [props.username]: 0 };
-    props.opponentUserNames?.forEach((username) => {
-      initialScores[username] = 0;
-    });
-    setScores(initialScores);
-  }, [props.username, props.opponentUserNames]);
+    // Only initialize scores if they haven't been initialized yet
+    if (Object.keys(props.scores).length === 0) {
+      const initialScores = { [props.username]: 0 };
+      props.opponentUserNames?.forEach((username) => {
+        initialScores[username] = 0;
+      });
+      props.setScores(initialScores);
+    }
+  });
 
   return (
     <div>
       {started ? (
-        <GTSGame {...props} songPlaying={songPlaying} setSongPlaying={setSongPlaying} scores={scores} />
+        <GTSGame
+          {...props}
+          songPlaying={songPlaying}
+          setSongPlaying={setSongPlaying}
+          scores={props.scores}
+          setScores={props.setScores}
+          guessingPlayer={guessingPlayer}
+        />
       ) : (
         <Timer seconds={3} setStarted={setStarted} />
       )}

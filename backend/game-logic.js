@@ -7,8 +7,7 @@ var gameSocket
 // gamesInSession stores an array of all active socket connections
 var gamesInSession = []
 // This object will hold the players for each game
-var playersInGames = {};
-
+var playersInGames = [];
 
 
 const registerSocketEvents = (socket, events) => {
@@ -64,7 +63,7 @@ function playerJoinsGame(idData) {
     if (!playersInGames[idData.gameId]) {
         playersInGames[idData.gameId] = [];
     }
-    playersInGames[idData.gameId].push({ userName: idData.userName, socketId: socket.id });
+    playersInGames[idData.gameId].push({ userName: idData.userName, socketId: socket.id, score: 0});
 
     const existingPlayers = getExistingPlayers(idData.gameId);
 
@@ -118,7 +117,15 @@ function recievedUserName() {
 
 function correctGuess(idData) {
     var socket = this
-    socket.broadcast.to(idData.gameId).emit('player correct', idData);
+    var player = playersInGames[idData.gameId].find(player => player.userName == idData.username);
+    
+    if (player) {
+        // Increase the player's score
+        player.score += 1;
+    }
+    
+    
+    socket.broadcast.to(idData.gameId).emit('player correct', player);
 }
 
 function wrongGuess(idData) {

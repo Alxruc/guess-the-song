@@ -195,6 +195,7 @@ const SelectorWrapper = (props) => {
   const [opponentSocketIDs, setOpponentSocketIDs] = useState([]);
   const [opponentUserNames, setOpponentUserNames] = useState([]);
   const [didStart, setDidStart] = useState(false);
+  const [scores, setScores] = useState([]);
 
   useEffect(() => {
     console.log("Fetching Spotify token");
@@ -236,6 +237,8 @@ const SelectorWrapper = (props) => {
             username={props.myUserName}
             gameid={gameid}
             opponentUserNames={opponentUserNames}
+            scores={scores}
+            setScores={setScores}
           />
       ) : (
         <React.Fragment>
