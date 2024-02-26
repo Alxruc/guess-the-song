@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { PlayerContext } from "./context";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
 import GTSGame from "./gtsgame";
@@ -18,6 +17,22 @@ const Row = ({ index, style, onRowClick, song }) => (
       : "-"}
   </div>
 );
+
+function DisplayURL() {
+  const urlRef = useRef(null);
+
+  const copyToClipboard = () => {
+    urlRef.current.select();
+    navigator.clipboard.writeText(urlRef.current.value);
+  };
+
+  return (
+    <div>
+      <input ref={urlRef} value={window.location.href} readOnly />
+      <button onClick={copyToClipboard}>Copy URL</button>
+    </div>
+  );
+}
 
 class GTSGameSelector extends React.Component {
   state = {
@@ -71,7 +86,7 @@ class GTSGameSelector extends React.Component {
         },
       };
 
-      var trackID = await fetch(
+      await fetch(
         "https://api.spotify.com/v1/search?q=" + userInput + "&type=track",
         trackParams
       )
@@ -97,8 +112,10 @@ class GTSGameSelector extends React.Component {
   };
 
   toggleComponentVisibility = () => {
-    this.setState(prevState => ({ isOtherComponentVisible: !prevState.isOtherComponentVisible }));
-  }
+    this.setState((prevState) => ({
+      isOtherComponentVisible: !prevState.isOtherComponentVisible,
+    }));
+  };
 
   handleSubmit = () => {
     if (this.state.song && this.state.song.preview_url !== undefined) {
@@ -120,7 +137,11 @@ class GTSGameSelector extends React.Component {
     return (
       <React.Fragment>
         {this.state.isOtherComponentVisible ? (
-          <GTSGame {...this.state} {...this.props} toggleComponentVisibility={this.toggleComponentVisibility}/>
+          <GTSGame
+            {...this.state}
+            {...this.props}
+            toggleComponentVisibility={this.toggleComponentVisibility}
+          />
         ) : this.state.host ? (
           <div>
             <h1> Search for a song! </h1>
@@ -135,7 +156,9 @@ class GTSGameSelector extends React.Component {
               <audio
                 ref={this.audio}
                 src={this.state.song ? this.state.song.preview_url : ""}
-                onLoadedMetadata={() => { if (this.audio.current) this.audio.current.volume = 0.05; }}
+                onLoadedMetadata={() => {
+                  if (this.audio.current) this.audio.current.volume = 0.05;
+                }}
               ></audio>
 
               {this.state.song && this.state.song.preview_url && (
@@ -231,24 +254,40 @@ const SelectorWrapper = (props) => {
   return (
     <div>
       {didStart ? (
-          <GTSGameSelector
-            accessToken={accessToken}
-            host={props.isHost}
-            username={props.myUserName}
-            gameid={gameid}
-            opponentUserNames={opponentUserNames}
-            scores={scores}
-            setScores={setScores}
-          />
+        <GTSGameSelector
+          accessToken={accessToken}
+          host={props.isHost}
+          username={props.myUserName}
+          gameid={gameid}
+          opponentUserNames={opponentUserNames}
+          scores={scores}
+          setScores={setScores}
+        />
       ) : (
         <React.Fragment>
           <div>
-            <h2>
-              Current opponents:{" "}
-              {opponentUserNames &&
-                opponentUserNames.length > 0 &&
-                opponentUserNames.join(", ")}
-            </h2>
+            {props.isHost ? (
+              <div>
+                <h1>
+                  Simply share this game's link with other players to invite
+                  them!
+                </h1>
+                <h2>
+                  {DisplayURL()}
+                  Current players:{" "}
+                  {opponentUserNames &&
+                    opponentUserNames.length > 1 &&
+                    opponentUserNames.join(", ")}
+                </h2>
+              </div>
+            ) : (
+              <h2>
+                Current opponents:{" "}
+                {opponentUserNames &&
+                  opponentUserNames.length > 1 &&
+                  opponentUserNames.join(", ")}
+              </h2>
+            )}
           </div>
           <div>
             {props.isHost &&

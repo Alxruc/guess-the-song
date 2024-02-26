@@ -63,8 +63,11 @@ function playerJoinsGame(idData) {
     if (!playersInGames[idData.gameId]) {
         playersInGames[idData.gameId] = [];
     }
-    playersInGames[idData.gameId].push({ userName: idData.userName, socketId: socket.id, score: 0});
-
+    if(!idData.isHost) {
+        // The host doesnt play
+        playersInGames[idData.gameId].push({ userName: idData.userName, socketId: socket.id, score: 0});
+    }
+    
     const existingPlayers = getExistingPlayers(idData.gameId);
 
     io.sockets.in(idData.gameId).emit('opponent joined', existingPlayers)
