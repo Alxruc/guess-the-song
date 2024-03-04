@@ -11,6 +11,7 @@ import Creation from "./utils/creation.js";
 import JoinGame from "./utils/joingame.js";
 import GTSGameSelector from "./utils/gtsgameselector.js";
 import JoinRoom from "./utils/joinroom.js";
+import "./App.css"
 
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
@@ -29,6 +30,9 @@ function App() {
 
   return (
     <div className="App">
+      <div>
+        <h1 class="gts-title"> Guess the Song! </h1>
+      </div>
       <PlayerContext.Provider
         value={{
           didRedirect: didRedirect,

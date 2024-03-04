@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
 import GTSGame from "./gtsgame";
-import "./songselectorstyle.css";
+import "./styling/songselectorstyle.css";
 
 const socket = require("../connection/socket").socket;
 
@@ -18,20 +18,8 @@ const Row = ({ index, style, onRowClick, song }) => (
   </div>
 );
 
-function DisplayURL() {
-  const urlRef = useRef(null);
-
-  const copyToClipboard = () => {
-    urlRef.current.select();
-    navigator.clipboard.writeText(urlRef.current.value);
-  };
-
-  return (
-    <div>
-      <input ref={urlRef} value={window.location.href} readOnly />
-      <button onClick={copyToClipboard}>Copy URL</button>
-    </div>
-  );
+function copyURL()  {
+  navigator.clipboard.writeText(window.location.href);
 }
 
 class GTSGameSelector extends React.Component {
@@ -268,12 +256,11 @@ const SelectorWrapper = (props) => {
           <div>
             {props.isHost ? (
               <div>
-                <h1>
-                  Simply share this game's link with other players to invite
-                  them!
+                <h1 class="copyEffect" onClick={copyURL}>
+                  Share the game link with others!
                 </h1>
+                <br></br>
                 <h2>
-                  {DisplayURL()}
                   Current players:{" "}
                   {opponentUserNames &&
                     opponentUserNames.length > 1 &&

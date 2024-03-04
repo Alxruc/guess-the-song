@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import "./styling/gtsgame.css";
 const socket = require("../connection/socket").socket;
 
 
@@ -25,8 +26,7 @@ const Timer = ({ seconds, setStarted }) => {
       // add timeLeft as a dependency to re-rerun the effect
       // when we update it
     },
-    [timeLeft],
-    [setStarted]
+    [timeLeft, setStarted]
   );
 
   return (
@@ -126,10 +126,10 @@ class GTSGame extends React.Component {
             )}
           </div>
         ) : (
-          <div>
+          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
             <h1> What is the name of this song?</h1>
             {this.props.songPlaying && (
-              <button class="btn btn-danger" onClick={this.handleGuessClick}>
+              <button class="buzzer" onClick={this.handleGuessClick}>
                 GUESS!
               </button>
             )}

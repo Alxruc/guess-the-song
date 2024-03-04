@@ -1,0 +1,45 @@
+.List {
+    border: 1px solid #d9dddd;
+  }
+  
+  .ListItemEven,
+  .ListItemOdd {
+    color: black;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-size: medium;
+  }
+
+  .ListItemOdd {
+    background-color: #ffffff;
+  }
+  
+  .ListItemEven {
+    background-color: #f8f8f0;
+}
+
+.copyEffect {
+  color: #ffffff;
+  position: relative;
+  text-decoration: none;
+}
+
+.copyEffect::before {
+  background: #0000ff;
+  content: "Click to copy!";
+  inset: 0;
+  position: absolute;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s ease-in-out;
+  z-index: 0;
+  height: 110%;
+  width: 100%;
+  cursor: pointer;
+}
+
+.copyEffect:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}

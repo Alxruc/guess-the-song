@@ -66,15 +66,13 @@ class CreateGame extends React.Component {
           </Navigate>
         ) : (
           <div>
-            <label>
-              Username:
+            <h3> Create a lobby by entering your username </h3>
               <input
                 name="username-input"
                 ref={this.userInput}
                 onChange={this.handleInput}
                 placeholder="Enter Username"
               ></input>
-            </label>
             <button className="default-button" onClick={this.handleClick}>
               Set Username
             </button>
