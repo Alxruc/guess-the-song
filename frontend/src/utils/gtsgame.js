@@ -95,13 +95,23 @@ class GTSGame extends React.Component {
       <React.Fragment>
         <div>
           <h3>Scores:</h3>
-          {Object.entries(this.props.scores).map(([username, score]) => (
-            <p key={username}>
-              {username}: {score}
-            </p>
-          ))}
+          <div class="row">
+            {Object.entries(this.props.scores).map(([username, score]) => (
+              <div class="col">
+                <div class="card">
+                  <div class="card-header" key={username}>
+                    {username}
+                  </div>
+                  <div class="card-body">
+                    {score}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         <audio
+          id="musicAudio"
           ref={this.audio}
           src={this.props.song ? this.props.song.preview_url : ""}
         ></audio>
@@ -128,11 +138,16 @@ class GTSGame extends React.Component {
         ) : (
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
             <h1> What is the name of this song?</h1>
-            {this.props.songPlaying && (
-              <button class="buzzer" onClick={this.handleGuessClick}>
+            {this.props.songPlaying && ( 
+            this.props.canGuess ? (
+              <button class="buzzer"  onClick={this.handleGuessClick}>
                 GUESS!
               </button>
-            )}
+            ) : (
+              <button class="buzzer-greyed">
+                Already guessed this round
+              </button>
+            ))}
           </div>
         )}
       </React.Fragment>
@@ -144,6 +159,7 @@ const GTSWrapper = (props) => {
   const [started, setStarted] = useState(false);
   const [songPlaying, setSongPlaying] = useState(true);
   const [guessingPlayer, setGuessingPlayer] = useState("");
+  const [canGuess, setCanGuess] = useState(true);
 
   useEffect(() => {
     socket.on("player guessed", (data) => {
@@ -159,6 +175,7 @@ const GTSWrapper = (props) => {
         ...props.scores,
         [player.userName]: player.score,
       });
+      setCanGuess(true);
       props.toggleComponentVisibility();
       setGuessingPlayer("");
       setSongPlaying(true);
@@ -167,6 +184,10 @@ const GTSWrapper = (props) => {
 
   useEffect(() => {
     socket.on("player wrong", (data) => {
+      if (data.username === props.username) {
+        // if the player guessed wrong, they can't guess again until the next song
+        setCanGuess(false);
+      }
       setSongPlaying(true);
       setGuessingPlayer("");
     });
@@ -175,7 +196,14 @@ const GTSWrapper = (props) => {
   useEffect(() => {
     // Only initialize scores if they haven't been initialized yet
     if (Object.keys(props.scores).length === 0) {
-      const initialScores = { [props.username]: 0 };
+      let initialScores = {};
+
+      // The host doesn't play, so they don't need a score
+      if(!props.host) {
+        initialScores = {
+          [props.username]: 0,
+        };
+      }
       props.opponentUserNames?.forEach((username) => {
         initialScores[username] = 0;
       });
@@ -193,6 +221,7 @@ const GTSWrapper = (props) => {
           scores={props.scores}
           setScores={props.setScores}
           guessingPlayer={guessingPlayer}
+          canGuess={canGuess}
         />
       ) : (
         <Timer seconds={3} setStarted={setStarted} />

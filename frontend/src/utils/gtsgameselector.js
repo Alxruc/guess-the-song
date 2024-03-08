@@ -131,11 +131,11 @@ class GTSGameSelector extends React.Component {
             toggleComponentVisibility={this.toggleComponentVisibility}
           />
         ) : this.state.host ? (
-          <div>
+          <div class="container">
             <h1> Search for a song! </h1>
             <div>
               {this.state.song && (
-                <button className="btn btn-primary" onClick={this.handleSubmit}>
+                <button className="hoverButton tealHover" onClick={this.handleSubmit}>
                   Submit
                 </button>
               )}
@@ -150,13 +150,13 @@ class GTSGameSelector extends React.Component {
               ></audio>
 
               {this.state.song && this.state.song.preview_url && (
-                <button className="btn btn-primary" onClick={this.playAudio}>
+                <button className="hoverButton tealHover" onClick={this.playAudio}>
                   Play
                 </button>
               )}
               <input ref={this.userInput}></input>
               {this.state.song && this.state.song.preview_url && (
-                <button className="btn btn-primary" onClick={this.pauseAudio}>
+                <button className="hoverButton tealHover" onClick={this.pauseAudio}>
                   Pause
                 </button>
               )}
@@ -184,7 +184,7 @@ class GTSGameSelector extends React.Component {
               )}
             </div>
             <div>
-              <button className="btn btn-primary" onClick={this.handleSearch}>
+              <button className="hoverButton tealHover" onClick={this.handleSearch}>
                 Search
               </button>
             </div>
@@ -254,11 +254,11 @@ const SelectorWrapper = (props) => {
       ) : (
         <React.Fragment>
           <div>
+            <h1 class="copyEffect" onClick={copyURL}>
+              Share the game link with others!
+            </h1>
             {props.isHost ? (
               <div>
-                <h1 class="copyEffect" onClick={copyURL}>
-                  Share the game link with others!
-                </h1>
                 <br></br>
                 <h2>
                   Current players:{" "}
@@ -281,11 +281,10 @@ const SelectorWrapper = (props) => {
               opponentSocketIDs &&
               opponentSocketIDs.length > 1 && (
                 <button
-                  className="btn btn-primary"
+                  className="hoverButton"
                   onClick={() => {
                     const idData = {
                       gameId: gameid,
-                      userName: props.myUserName,
                     };
                     setDidStart(true);
                     socket.emit("start game", idData);

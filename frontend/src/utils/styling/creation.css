@@ -1,0 +1,15 @@
+h3 {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    text-align: center;
+    word-wrap: break-word;
+    width: 50%;
+}
+
+.container {
+    display: grid;
+    gap: 1rem;
+}

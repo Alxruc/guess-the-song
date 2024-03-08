@@ -1,6 +1,13 @@
+
+/* Color palette:
+#0E0A1C
+#5332ED
+#22D3D7*/
+
+
 .App {
   text-align: center;
-  background-color: #161d2b;
+  background-color: #0E0A1C;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -11,34 +18,100 @@
 }
 
 
-.default-button {
-  background-color: #222;
-  border-radius: 4px;
-  color: #fff;
+.hoverButton {
+  padding: 17px 40px;
+  border-radius: 50px;
   cursor: pointer;
-  display: inline-block;
-  font-family: sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5;
-  margin: 1rem;
-  max-width: 200px;
-  min-height: 44px;
-  min-width: 10px;
-  position: relative;
-  text-align: center;
-  width: 100%;
+  border: 0;
+  background-color: white;
+  box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+  transition: all 0.5s ease;
+}
+
+.hoverButton:hover {
+  letter-spacing: 3px;
+  background-color: #5332ED;
+  color: white;
+  box-shadow: #5432ed7e 0px 7px 29px 0px;
+}
+
+.hoverButton:active {
+  background-color: #5432ed7e;
+  transition: 300ms;
+}
+
+.tealHover:hover {
+  background-color: #22D3D7;
+  box-shadow: #22D3D77e 0px 7px 29px 0px;
+}
+
+.tealHover:active {
+  background-color: #22D3D77e;
+  transition: 300ms;
 }
 
 .gts-title {
-  font-size: 4rem; 
-  margin-bottom: 5rem;
-  padding-bottom: 0;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 2rem; 
+  font-weight: bold;
   color: #ffffff;
   transition: transform 1.5s;
 }
 
 .gts-title:hover {
   transform: rotate3d(0.1,1,0.1, 360deg);
+}
+
+.mute-button {
+  background-color: #5332ED;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  left: auto;
+  color: white;
+  padding: 17px 40px;
+  border-radius: 50px;
+  cursor: pointer;
+  border: 0;
+  box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+  transition: all 0.5s ease;
+}
+
+.mute-button:hover {
+  box-shadow: #5432ed7e 0px 7px 29px 0px;
+}
+
+.unmute-button {
+  background-color: red;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  left: auto;
+  color: white;
+  padding: 17px 40px;
+  border-radius: 50px;
+  cursor: pointer;
+  border: 0;
+  box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+  transition: all 0.5s ease;
+}
+
+.unmute-button:hover {
+  box-shadow: rgba(255, 0, 0, 0.5) 0px 7px 29px 0px;
+}
+
+input {
+  padding: 10px;
+  border-radius: 15px;
+  border: 1px solid #d9dddd;
+
 }
 

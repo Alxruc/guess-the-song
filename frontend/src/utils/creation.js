@@ -2,6 +2,7 @@ import React from "react";
 import { PlayerContext } from "./context";
 import { Navigate } from 'react-router-dom'
 import { v4 as uuidv4 } from "uuid";
+import './styling/creation.css';
 const socket  = require('../connection/socket').socket
 
 class CreateGame extends React.Component {
@@ -66,16 +67,18 @@ class CreateGame extends React.Component {
           </Navigate>
         ) : (
           <div>
-            <h3> Create a lobby by entering your username </h3>
-              <input
-                name="username-input"
-                ref={this.userInput}
-                onChange={this.handleInput}
-                placeholder="Enter Username"
-              ></input>
-            <button className="default-button" onClick={this.handleClick}>
-              Set Username
-            </button>
+            <h3> Create a lobby by entering your username! </h3>
+              <div class="container">
+                <input
+                  name="username-input"
+                  ref={this.userInput}
+                  onChange={this.handleInput}
+                  placeholder="Username"
+                ></input>
+                <button className="hoverButton" onClick={this.handleClick}>
+                  Set Username
+                </button>  
+              </div>
           </div>
         )}
       </React.Fragment>

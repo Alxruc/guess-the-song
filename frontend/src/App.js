@@ -15,6 +15,22 @@ import "./App.css"
 
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
+function globalMute() {
+  let audio = document.getElementById("musicAudio");
+  let audioButton = document.getElementById("muteButton")
+  if(audio && audioButton) {
+    audio.muted = !audio.muted;
+    if(audio.muted) {
+      audioButton.innerHTML = "Unmute";
+      audioButton.className = "unmute-button";
+    } else {
+      audioButton.innerHTML = "Mute";
+      audioButton.className = "mute-button";
+    }
+  }
+
+}
+
 function App() {
   const [name, setName] = React.useState("");
 
@@ -33,6 +49,9 @@ function App() {
       <div>
         <h1 class="gts-title"> Guess the Song! </h1>
       </div>
+      <button id="muteButton" class="mute-button" onClick={globalMute}>
+        Mute
+      </button>
       <PlayerContext.Provider
         value={{
           didRedirect: didRedirect,

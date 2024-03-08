@@ -26,7 +26,7 @@
 }
 
 .copyEffect::before {
-  background: #0000ff;
+  background: #5332ED;
   content: "Click to copy!";
   inset: 0;
   position: absolute;
