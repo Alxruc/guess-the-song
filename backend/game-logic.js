@@ -36,9 +36,7 @@ const initializeGame = (sio, socket) => {
         "new guess": newGuess,
         "createNewGame": createNewGame,
         "playerJoinGame": playerJoinsGame,
-        "request username": requestUserName,
         "start game": startGame,
-        "recieved username": recievedUserName,
         "correct guess": correctGuess,
         "wrong guess": wrongGuess
     };
@@ -108,16 +106,6 @@ function createNewGame(gameId) {
     this.join(gameId)
 }
 
-function requestUserName() {
-    var socket = this
-    //TODO
-}
-
-function recievedUserName() {
-    var socket = this
-    //TODO
-}
-
 function correctGuess(idData) {
     var socket = this
     var player = playersInGames[idData.gameId].find(player => player.userName == idData.username);
@@ -126,7 +114,6 @@ function correctGuess(idData) {
         // Increase the player's score
         player.score += 1;
     }
-    
     
     socket.broadcast.to(idData.gameId).emit('player correct', player);
 }
