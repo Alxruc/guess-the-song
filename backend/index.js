@@ -4,10 +4,11 @@ const socketio = require("socket.io");
 const gameLogic = require("./game-logic");
 const fetch = require("cross-fetch");
 const cors = require("cors");
+const { FRONTEND_URL } = require("./config");
 require('dotenv').config()
 const app = express();
 
-const frontendOrigin = "http://localhost:3000"; // Replace with your frontend's origin
+const frontendOrigin = FRONTEND_URL; 
 
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
