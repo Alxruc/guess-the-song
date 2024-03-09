@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
+import NewWindow from 'react-new-window';
 import GTSGame from "./gtsgame";
+import ScoreView from "./scoreview";
 import "./styling/songselectorstyle.css";
+import { BACKEND_URL } from "../config";
 
 const socket = require("../connection/socket").socket;
 
@@ -18,7 +21,7 @@ const Row = ({ index, style, onRowClick, song }) => (
   </div>
 );
 
-function copyURL()  {
+function copyURL() {
   navigator.clipboard.writeText(window.location.href);
 }
 
@@ -135,7 +138,10 @@ class GTSGameSelector extends React.Component {
             <h1> Search for a song! </h1>
             <div>
               {this.state.song && (
-                <button className="hoverButton tealHover" onClick={this.handleSubmit}>
+                <button
+                  className="hoverButton tealHover"
+                  onClick={this.handleSubmit}
+                >
                   Submit
                 </button>
               )}
@@ -150,13 +156,19 @@ class GTSGameSelector extends React.Component {
               ></audio>
 
               {this.state.song && this.state.song.preview_url && (
-                <button className="hoverButton tealHover" onClick={this.playAudio}>
+                <button
+                  className="hoverButton tealHover"
+                  onClick={this.playAudio}
+                >
                   Play
                 </button>
               )}
               <input ref={this.userInput}></input>
               {this.state.song && this.state.song.preview_url && (
-                <button className="hoverButton tealHover" onClick={this.pauseAudio}>
+                <button
+                  className="hoverButton tealHover"
+                  onClick={this.pauseAudio}
+                >
                   Pause
                 </button>
               )}
@@ -184,7 +196,10 @@ class GTSGameSelector extends React.Component {
               )}
             </div>
             <div>
-              <button className="hoverButton tealHover" onClick={this.handleSearch}>
+              <button
+                className="hoverButton tealHover"
+                onClick={this.handleSearch}
+              >
                 Search
               </button>
             </div>
@@ -206,16 +221,17 @@ const SelectorWrapper = (props) => {
   const [opponentSocketIDs, setOpponentSocketIDs] = useState([]);
   const [opponentUserNames, setOpponentUserNames] = useState([]);
   const [didStart, setDidStart] = useState(false);
+  const [openNewWindow, setOpenNewWindow] = useState(false); // For opening a seperate window to view scores, without things like the song title etc. being shown
   const [scores, setScores] = useState([]);
 
   useEffect(() => {
     console.log("Fetching Spotify token");
-    fetch("http://localhost:8000/spotify-token")
+    fetch(BACKEND_URL + "/spotify-token")
       .then((response) => response.json())
       .then((data) => {
         setAccessToken(data.access_token);
       })
-      .catch((error) => console.error("Error:", error));
+      .catch((error) => console.error("Error: ", error));
   }, []);
 
   useEffect(() => {
@@ -239,18 +255,39 @@ const SelectorWrapper = (props) => {
     });
   }, []);
 
+  const handleOpenNewWindow = () => {
+    setOpenNewWindow(true);
+  }
+
+  const handleCloseNewWindow = () => {
+    setOpenNewWindow(false);
+  }
+
   return (
     <div>
       {didStart ? (
-        <GTSGameSelector
-          accessToken={accessToken}
-          host={props.isHost}
-          username={props.myUserName}
-          gameid={gameid}
-          opponentUserNames={opponentUserNames}
-          scores={scores}
-          setScores={setScores}
-        />
+        <React.Fragment>
+          <GTSGameSelector
+            accessToken={accessToken}
+            host={props.isHost}
+            username={props.myUserName}
+            gameid={gameid}
+            opponentUserNames={opponentUserNames}
+            scores={scores}
+            setScores={setScores}
+          />
+
+          <div>
+            <button class="newWindowButton" onClick={handleOpenNewWindow}>Scores Only</button>
+            {openNewWindow && (
+              <NewWindow onUnload={handleCloseNewWindow}>
+                <div class="App">
+                  <ScoreView scores={scores}/>
+                </div>
+              </NewWindow>
+            )}
+          </div>
+        </React.Fragment>
       ) : (
         <React.Fragment>
           <div>

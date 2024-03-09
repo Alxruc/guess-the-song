@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import ScoreView from "./scoreview";
 import "./styling/gtsgame.css";
 const socket = require("../connection/socket").socket;
 
@@ -95,20 +96,7 @@ class GTSGame extends React.Component {
       <React.Fragment>
         <div>
           <h3>Scores:</h3>
-          <div class="row">
-            {Object.entries(this.props.scores).map(([username, score]) => (
-              <div class="col">
-                <div class="card">
-                  <div class="card-header" key={username}>
-                    {username}
-                  </div>
-                  <div class="card-body">
-                    {score}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ScoreView scores={this.props.scores}/>
         </div>
         <audio
           id="musicAudio"

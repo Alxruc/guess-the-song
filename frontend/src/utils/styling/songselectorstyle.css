@@ -43,3 +43,24 @@
   transform: scaleX(1);
   transform-origin: left;
 }
+
+.newWindowButton {
+  background-color: #5332ED;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  left: auto;
+  color: white;
+  padding: 17px 40px;
+  border-radius: 50px;
+  cursor: pointer;
+  border: 0;
+  box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+  transition: all 0.5s ease;
+}
+
+.newWindowButton:hover {
+  box-shadow: #5432ed7e 0px 7px 29px 0px;
+}
