@@ -93,13 +93,15 @@ class GTSGameSelector extends React.Component {
     }
   };
 
-  playAudio = () => {
-    console.log(this.audio.current.src);
-    this.audio.current.play();
-  };
-
-  pauseAudio = () => {
-    this.audio.current.pause();
+  toggleAudio = () => {
+    let playButton = document.getElementById("playPausePreview");
+    if (this.audio.current.paused) {
+      this.audio.current.play();
+      playButton.innerHTML = "Pause Preview"
+    } else {
+      this.audio.current.pause();
+      playButton.innerHTML = "Play Preview"
+    }
   };
 
   toggleComponentVisibility = () => {
@@ -154,26 +156,20 @@ class GTSGameSelector extends React.Component {
                   if (this.audio.current) this.audio.current.volume = 0.05;
                 }}
               ></audio>
-
-              {this.state.song && this.state.song.preview_url && (
-                <button
-                  className="hoverButton tealHover"
-                  onClick={this.playAudio}
-                >
-                  Play
-                </button>
-              )}
               <input ref={this.userInput}></input>
-              {this.state.song && this.state.song.preview_url && (
+            </div>
+            <div>
+            {this.state.song && this.state.song.preview_url && (
                 <button
                   className="hoverButton tealHover"
-                  onClick={this.pauseAudio}
+                  id="playPausePreview"
+                  onClick={this.toggleAudio}
                 >
-                  Pause
+                  Play Preview
                 </button>
               )}
             </div>
-            <div>
+            <div class="container">
               {this.state.isListVisible && (
                 <List
                   className="List"

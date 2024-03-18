@@ -1,5 +1,6 @@
 .List {
-    border: 1px solid #d9dddd;
+    border: 4px solid #22D3D7;
+    border-radius: 2px;
   }
   
   .ListItemEven,
@@ -16,7 +17,7 @@
   }
   
   .ListItemEven {
-    background-color: #f8f8f0;
+    background-color: #dddddd;
 }
 
 .copyEffect {

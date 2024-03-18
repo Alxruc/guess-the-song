@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import ScoreView from "./scoreview";
+import { PlayerContext } from "./context";
 import "./styling/gtsgame.css";
 const socket = require("../connection/socket").socket;
 
@@ -45,7 +46,13 @@ class GTSGame extends React.Component {
   }
 
   componentDidMount() {
-    this.audio.current.volume = 0.05;
+    if(this.props.muted) {
+      this.audio.current.volume = 0.0;
+    }
+    else {
+      this.audio.current.volume = 0.05;
+    }
+    
     this.audio.current.play();
   }
 
@@ -57,6 +64,10 @@ class GTSGame extends React.Component {
         this.audio.current.pause();
       }
     }
+
+    if (prevProps.muted !== this.props.muted) {
+      this.audio.current.volume = this.props.muted ? 0.0 : 0.05;
+    } 
   }
 
   handleGuessClick = () => {
@@ -94,10 +105,7 @@ class GTSGame extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div>
-          <h3>Scores:</h3>
-          <ScoreView scores={this.props.scores}/>
-        </div>
+        <ScoreView scores={this.props.scores}/>
         <audio
           id="musicAudio"
           ref={this.audio}
@@ -148,6 +156,7 @@ const GTSWrapper = (props) => {
   const [songPlaying, setSongPlaying] = useState(true);
   const [guessingPlayer, setGuessingPlayer] = useState("");
   const [canGuess, setCanGuess] = useState(true);
+  const muted = React.useContext(PlayerContext).muted;
 
   useEffect(() => {
     socket.on("player guessed", (data) => {
@@ -210,6 +219,7 @@ const GTSWrapper = (props) => {
           setScores={props.setScores}
           guessingPlayer={guessingPlayer}
           canGuess={canGuess}
+          muted={muted}
         />
       ) : (
         <Timer seconds={3} setStarted={setStarted} />

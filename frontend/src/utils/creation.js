@@ -67,7 +67,7 @@ class CreateGame extends React.Component {
           </Navigate>
         ) : (
           <div>
-            <h3> Create a lobby by entering your username! </h3>
+            <h3 class="creationTitle"> Create a lobby by entering your username! </h3>
               <div class="container">
                 <input
                   name="username-input"
