@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, {useEffect} from "react";
 import { PlayerContext } from "./utils/context.js";
 import {
   BrowserRouter as Router,
@@ -12,6 +12,7 @@ import JoinGame from "./utils/joingame.js";
 import GTSGameSelector from "./utils/gtsgameselector.js";
 import JoinRoom from "./utils/joinroom.js";
 import "./App.css";
+import { BACKEND_URL } from "./config.js";
 
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
@@ -20,6 +21,7 @@ function App() {
 
   const [didRedirect, setDidRedirect] = React.useState(false);
   const [muted, setMuted] = React.useState(false);
+  const [token, setToken] = React.useState("");
 
   const playerDidRedirect = React.useCallback(() => {
     setDidRedirect(true);
@@ -28,6 +30,16 @@ function App() {
   const playerDidNotRedirect = React.useCallback(() => {
     setDidRedirect(false);
   }, []);
+
+  const loginWithSpotify = () => {
+    window.location.href = BACKEND_URL + "/spotify-login";
+  };
+
+  async function getToken() {
+    const response = await fetch(BACKEND_URL + '/spotify-token');
+    const text = await response.json(); // Get response as text
+    console.log(text); // Log the response
+  } 
 
   const toggleMute = React.useCallback(() => {
     let audioButton = document.getElementById("muteButton");
@@ -45,6 +57,8 @@ function App() {
       <div>
         <h1 class="gts-title"> Guess the Song! </h1>
       </div>
+      <button onClick={loginWithSpotify}> Login With Spotify </button>
+      <button onClick={getToken}> Test </button>
       <button id="muteButton" class="mute-button" onClick={toggleMute}>
         {muted ? "Unmute" : "Mute"}
       </button>

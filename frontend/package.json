@@ -41,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "axios": "^1.6.8",
     "react-new-window": "^1.0.1",
     "react-router-dom": "^6.21.1",
     "socket.io": "^4.7.3"
