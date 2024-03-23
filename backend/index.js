@@ -6,11 +6,17 @@ const fetch = require("cross-fetch");
 const cors = require("cors");
 const request = require("request");
 const querystring = require("querystring");
+const request = require("request");
+const querystring = require("querystring");
 const { FRONTEND_URL } = require("./config");
 require('dotenv').config()
 const app = express();
 
 const frontendOrigin = FRONTEND_URL; 
+const redirect_uri = "http://localhost:8000/callback"; // Your redirect uri
+
+
+var access_token = '';
 const redirect_uri = "http://localhost:8000/callback"; // Your redirect uri
 
 
@@ -39,6 +45,7 @@ app.use(
 
 // Backup for if the user is not logged in, legacy code
 app.get(
+  "/spotify-public-token",
   "/spotify-public-token",
   (req, res, next) => {
     const allowedOrigins = [frontendOrigin]; 

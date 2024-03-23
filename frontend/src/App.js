@@ -1,5 +1,6 @@
 import "./App.css";
 import React, {useEffect} from "react";
+import React, {useEffect} from "react";
 import { PlayerContext } from "./utils/context.js";
 import {
   BrowserRouter as Router,
@@ -13,6 +14,7 @@ import GTSGameSelector from "./utils/gtsgameselector.js";
 import JoinRoom from "./utils/joinroom.js";
 import "./App.css";
 import { BACKEND_URL } from "./config.js";
+import { BACKEND_URL } from "./config.js";
 
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
@@ -21,6 +23,7 @@ function App() {
 
   const [didRedirect, setDidRedirect] = React.useState(false);
   const [muted, setMuted] = React.useState(false);
+  const [token, setToken] = React.useState("");
   const [token, setToken] = React.useState("");
 
   const playerDidRedirect = React.useCallback(() => {
@@ -57,6 +60,8 @@ function App() {
       <div>
         <h1 class="gts-title"> Guess the Song! </h1>
       </div>
+      <button onClick={loginWithSpotify}> Login With Spotify </button>
+      <button onClick={getToken}> Test </button>
       <button id="muteButton" class="mute-button" onClick={toggleMute}>
         {muted ? "Unmute" : "Mute"}
       </button>
