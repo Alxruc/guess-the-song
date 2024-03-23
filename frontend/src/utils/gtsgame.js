@@ -42,32 +42,33 @@ const Timer = ({ seconds, setStarted }) => {
 class GTSGame extends React.Component {
   constructor(props) {
     super(props);
-    this.audio = React.createRef();
   }
 
   componentDidMount() {
-    if(this.props.muted) {
-      this.audio.current.volume = 0.0;
+    if (this.props.host) {
+      this.props.play(this.props.song.uri);
     }
-    else {
-      this.audio.current.volume = 0.05;
-    }
-    
-    this.audio.current.play();
   }
 
   componentDidUpdate(prevProps) {
+    const player = this.props.musicPlayer;
+
     if (prevProps.songPlaying !== this.props.songPlaying) {
       if (this.props.songPlaying) {
-        this.audio.current.play();
+        player?.resume().then(() => {
+          console.log('Track resumed');
+        }).catch(error => {
+          console.error('Error resuming track:', error);
+        });
+
       } else {
-        this.audio.current.pause();
+        player?.pause().then(() => {
+          console.log('Track paused');
+        }).catch(error => {
+          console.error('Error pausing track:', error);
+        });
       }
     }
-
-    if (prevProps.muted !== this.props.muted) {
-      this.audio.current.volume = this.props.muted ? 0.0 : 0.05;
-    } 
   }
 
   handleGuessClick = () => {
@@ -106,11 +107,6 @@ class GTSGame extends React.Component {
     return (
       <React.Fragment>
         <ScoreView scores={this.props.scores}/>
-        <audio
-          id="musicAudio"
-          ref={this.audio}
-          src={this.props.song ? this.props.song.preview_url : ""}
-        ></audio>
         {this.props.host ? (
           <div>
             <h1>
@@ -218,6 +214,8 @@ const GTSWrapper = (props) => {
           scores={props.scores}
           setScores={props.setScores}
           guessingPlayer={guessingPlayer}
+          musicPlayer={props.musicPlayer}
+          play={props.play}
           canGuess={canGuess}
           muted={muted}
         />

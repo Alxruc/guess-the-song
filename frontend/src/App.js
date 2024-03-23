@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, {useEffect} from "react";
 import { PlayerContext } from "./utils/context.js";
 import {
   BrowserRouter as Router,
@@ -12,6 +12,7 @@ import JoinGame from "./utils/joingame.js";
 import GTSGameSelector from "./utils/gtsgameselector.js";
 import JoinRoom from "./utils/joinroom.js";
 import "./App.css";
+import { BACKEND_URL } from "./config.js";
 
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
@@ -20,6 +21,7 @@ function App() {
 
   const [didRedirect, setDidRedirect] = React.useState(false);
   const [muted, setMuted] = React.useState(false);
+  const [token, setToken] = React.useState("");
 
   const playerDidRedirect = React.useCallback(() => {
     setDidRedirect(true);
@@ -28,6 +30,16 @@ function App() {
   const playerDidNotRedirect = React.useCallback(() => {
     setDidRedirect(false);
   }, []);
+
+  const loginWithSpotify = () => {
+    window.location.href = BACKEND_URL + "/spotify-login";
+  };
+
+  async function getToken() {
+    const response = await fetch(BACKEND_URL + '/spotify-token');
+    const json = await response.json(); // Get response as text
+    setToken(json.access_token);
+  } 
 
   const toggleMute = React.useCallback(() => {
     let audioButton = document.getElementById("muteButton");
@@ -61,7 +73,13 @@ function App() {
             <Route
               path="/"
               element={
-                <Creation setName={setName} setDidRedirect={setDidRedirect} />
+                <button onClick={loginWithSpotify}> Login With Spotify </button>
+              }
+            />
+            <Route
+              path="/success"
+              element={
+                  <Creation setName={setName} setDidRedirect={setDidRedirect} />
               }
             />
             <Route
@@ -71,7 +89,7 @@ function App() {
                   {didRedirect ? (
                     <>
                       <JoinGame userName={name} isHost={true} />
-                      <GTSGameSelector myUserName={name} isHost={true} />
+                      <GTSGameSelector myUserName={name} isHost={true}/>
                     </>
                   ) : (
                     <JoinRoom />

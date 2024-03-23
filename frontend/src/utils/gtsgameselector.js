@@ -6,6 +6,7 @@ import GTSGame from "./gtsgame";
 import ScoreView from "./scoreview";
 import "./styling/songselectorstyle.css";
 import { BACKEND_URL } from "../config";
+import setupWebPlayer from "./webplayer";
 
 const socket = require("../connection/socket").socket;
 
@@ -78,7 +79,7 @@ class GTSGameSelector extends React.Component {
       };
 
       await fetch(
-        "https://api.spotify.com/v1/search?q=" + userInput + "&type=track",
+        "https://api.spotify.com/v1/search?q=" + userInput + "&type=track&market=DE",
         trackParams
       )
         .then((response) => response.json())
@@ -219,16 +220,44 @@ const SelectorWrapper = (props) => {
   const [didStart, setDidStart] = useState(false);
   const [openNewWindow, setOpenNewWindow] = useState(false); // For opening a seperate window to view scores, without things like the song title etc. being shown
   const [scores, setScores] = useState([]);
+  const [musicPlayer, setMusicPlayer] = useState(null);
+  const [play, setPlay] = useState(null);
+
+  // useEffect(() => {
+  //   console.log("Fetching Spotify token");
+  //   fetch(BACKEND_URL + "/spotify-public-token") //for not logged in users
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setAccessToken(data.access_token);
+  //     })
+  //     .catch((error) => console.error("Error: ", error));
+  // }, []);
 
   useEffect(() => {
-    console.log("Fetching Spotify token");
-    fetch(BACKEND_URL + "/spotify-token")
-      .then((response) => response.json())
-      .then((data) => {
-        setAccessToken(data.access_token);
+    if(props.isHost) {
+      fetch(BACKEND_URL + "/spotify-token")
+        .then((response) => response.json())
+        .then((data) => {
+          setAccessToken(data.access_token);
+          console.log("Access token: " + data.access_token);
+        })
+        .catch((error) => console.error("Error: ", error));
+    }
+  })
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://sdk.scdn.co/spotify-player.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    setupWebPlayer(accessToken)
+      .then(({musicPlayer, play}) => {
+        setMusicPlayer(musicPlayer);
+        setPlay(() => play);
+        console.log("Music player set up");
       })
-      .catch((error) => console.error("Error: ", error));
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
     socket.on("opponent joined", (data) => {
@@ -271,6 +300,8 @@ const SelectorWrapper = (props) => {
             opponentUserNames={opponentUserNames}
             scores={scores}
             setScores={setScores}
+            musicPlayer={musicPlayer}
+            play={play}
           />
 
           <div>
