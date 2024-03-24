@@ -40,7 +40,6 @@ class GTSGameSelector extends React.Component {
   constructor(props) {
     super(props);
     this.userInput = React.createRef();
-    this.audio = React.createRef();
   }
 
   componentDidMount() {
@@ -94,17 +93,6 @@ class GTSGameSelector extends React.Component {
     }
   };
 
-  toggleAudio = () => {
-    let playButton = document.getElementById("playPausePreview");
-    if (this.audio.current.paused) {
-      this.audio.current.play();
-      playButton.innerHTML = "Pause Preview"
-    } else {
-      this.audio.current.pause();
-      playButton.innerHTML = "Play Preview"
-    }
-  };
-
   toggleComponentVisibility = () => {
     this.setState((prevState) => ({
       isOtherComponentVisible: !prevState.isOtherComponentVisible,
@@ -150,25 +138,7 @@ class GTSGameSelector extends React.Component {
               )}
             </div>
             <div>
-              <audio
-                ref={this.audio}
-                src={this.state.song ? this.state.song.preview_url : ""}
-                onLoadedMetadata={() => {
-                  if (this.audio.current) this.audio.current.volume = 0.05;
-                }}
-              ></audio>
               <input ref={this.userInput}></input>
-            </div>
-            <div>
-            {this.state.song && this.state.song.preview_url && (
-                <button
-                  className="hoverButton tealHover"
-                  id="playPausePreview"
-                  onClick={this.toggleAudio}
-                >
-                  Play Preview
-                </button>
-              )}
             </div>
             <div class="container">
               {this.state.isListVisible && (
@@ -220,7 +190,8 @@ const SelectorWrapper = (props) => {
   const [didStart, setDidStart] = useState(false);
   const [openNewWindow, setOpenNewWindow] = useState(false); // For opening a seperate window to view scores, without things like the song title etc. being shown
   const [scores, setScores] = useState([]);
-  const [musicPlayer, setMusicPlayer] = useState(null);
+  const [resumePlayer, setResumePlayer] = useState(null);
+  const [pausePlayer, setPausePlayer] = useState(null);
   const [play, setPlay] = useState(null);
 
   // useEffect(() => {
@@ -252,8 +223,9 @@ const SelectorWrapper = (props) => {
     document.body.appendChild(script);
 
     setupWebPlayer(accessToken)
-      .then(({musicPlayer, play}) => {
-        setMusicPlayer(musicPlayer);
+      .then(({resumePlayer, pausePlayer, play}) => {
+        setResumePlayer(() => resumePlayer);
+        setPausePlayer(() => pausePlayer);
         setPlay(() => play);
         console.log("Music player set up");
       })
@@ -300,7 +272,8 @@ const SelectorWrapper = (props) => {
             opponentUserNames={opponentUserNames}
             scores={scores}
             setScores={setScores}
-            musicPlayer={musicPlayer}
+            resumePlayer={resumePlayer}
+            pausePlayer={pausePlayer}
             play={play}
           />
 

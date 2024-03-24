@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import ScoreView from "./scoreview";
-import { PlayerContext } from "./context";
 import "./styling/gtsgame.css";
 const socket = require("../connection/socket").socket;
 
@@ -40,9 +39,6 @@ const Timer = ({ seconds, setStarted }) => {
 };
 
 class GTSGame extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
     if (this.props.host) {
@@ -51,22 +47,11 @@ class GTSGame extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const player = this.props.musicPlayer;
-
-    if (prevProps.songPlaying !== this.props.songPlaying) {
+    if (prevProps.songPlaying !== this.props.songPlaying && this.props.host) {
       if (this.props.songPlaying) {
-        player?.resume().then(() => {
-          console.log('Track resumed');
-        }).catch(error => {
-          console.error('Error resuming track:', error);
-        });
-
+        this.props.resumePlayer();
       } else {
-        player?.pause().then(() => {
-          console.log('Track paused');
-        }).catch(error => {
-          console.error('Error pausing track:', error);
-        });
+        this.props.pausePlayer();
       }
     }
   }
@@ -152,7 +137,6 @@ const GTSWrapper = (props) => {
   const [songPlaying, setSongPlaying] = useState(true);
   const [guessingPlayer, setGuessingPlayer] = useState("");
   const [canGuess, setCanGuess] = useState(true);
-  const muted = React.useContext(PlayerContext).muted;
 
   useEffect(() => {
     socket.on("player guessed", (data) => {
@@ -214,10 +198,9 @@ const GTSWrapper = (props) => {
           scores={props.scores}
           setScores={props.setScores}
           guessingPlayer={guessingPlayer}
-          musicPlayer={props.musicPlayer}
+          togglePlayer={props.togglePlayer}
           play={props.play}
           canGuess={canGuess}
-          muted={muted}
         />
       ) : (
         <Timer seconds={3} setStarted={setStarted} />

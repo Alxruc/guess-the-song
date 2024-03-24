@@ -15,8 +15,6 @@ function setupWebPlayer(access_token) {
         console.log("Ready with Device ID", device_id);
 
         function play(uri) {
-          console.log("Playing URI", uri);
-          console.log("Device ID", device_id);
           fetch(
             `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`,
             {
@@ -30,7 +28,33 @@ function setupWebPlayer(access_token) {
           );
         }
 
-        resolve({player, play})
+        function pausePlayer() {
+          fetch(
+            `https://api.spotify.com/v1/me/player/pause?device_id=${device_id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${access_token}`,
+              }
+            }
+          )
+        }
+
+        function resumePlayer() {
+          fetch(
+            `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${access_token}`,
+              }
+            }	
+          )
+        }
+
+        resolve({resumePlayer, pausePlayer, play})
       });
 
       player.addListener("not_ready", ({ device_id }) => {

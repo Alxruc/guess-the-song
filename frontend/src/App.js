@@ -1,6 +1,5 @@
 import "./App.css";
-import React, {useEffect} from "react";
-import React, {useEffect} from "react";
+import React from "react";
 import { PlayerContext } from "./utils/context.js";
 import {
   BrowserRouter as Router,
@@ -14,7 +13,6 @@ import GTSGameSelector from "./utils/gtsgameselector.js";
 import JoinRoom from "./utils/joinroom.js";
 import "./App.css";
 import { BACKEND_URL } from "./config.js";
-import { BACKEND_URL } from "./config.js";
 
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
@@ -22,9 +20,6 @@ function App() {
   const [name, setName] = React.useState("");
 
   const [didRedirect, setDidRedirect] = React.useState(false);
-  const [muted, setMuted] = React.useState(false);
-  const [token, setToken] = React.useState("");
-  const [token, setToken] = React.useState("");
 
   const playerDidRedirect = React.useCallback(() => {
     setDidRedirect(true);
@@ -38,36 +33,14 @@ function App() {
     window.location.href = BACKEND_URL + "/spotify-login";
   };
 
-  async function getToken() {
-    const response = await fetch(BACKEND_URL + '/spotify-token');
-    const json = await response.json(); // Get response as text
-    setToken(json.access_token);
-  } 
-
-  const toggleMute = React.useCallback(() => {
-    let audioButton = document.getElementById("muteButton");
-
-    if (audioButton.className == "mute-button") {
-      audioButton.className = "unmute-button";
-    } else {
-      audioButton.className = "mute-button";
-    }
-    setMuted((prevMuted) => !prevMuted);
-  }, []);
 
   return (
     <div className="App">
       <div>
         <h1 class="gts-title"> Guess the Song! </h1>
       </div>
-      <button onClick={loginWithSpotify}> Login With Spotify </button>
-      <button onClick={getToken}> Test </button>
-      <button id="muteButton" class="mute-button" onClick={toggleMute}>
-        {muted ? "Unmute" : "Mute"}
-      </button>
       <PlayerContext.Provider
         value={{
-          muted: muted,
           didRedirect: didRedirect,
           playerDidRedirect: playerDidRedirect,
           playerDidNotRedirect: playerDidNotRedirect,
@@ -78,7 +51,7 @@ function App() {
             <Route
               path="/"
               element={
-                <button onClick={loginWithSpotify}> Login With Spotify </button>
+                <button class="spotify-button" onClick={loginWithSpotify}> Login With Spotify </button>
               }
             />
             <Route

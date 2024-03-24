@@ -40,8 +40,8 @@ class CreateGame extends React.Component {
   };
 
   send = () => {
-    //Create new room with UUID
-    const newGameRoomId = uuidv4();
+    //Create new room with UUID (shortened to 8 characters for simplicity)
+    const newGameRoomId = uuidv4().substring(0,8);
     
     this.setState({
       gameId: newGameRoomId,

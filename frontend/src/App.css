@@ -66,47 +66,28 @@
   transform: rotate3d(0.1,1,0.1, 360deg);
 }
 
-.mute-button {
-  background-color: #5332ED;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  left: auto;
+.spotify-button {
+  background-color: #1DB954;
   color: white;
-  padding: 17px 40px;
+  padding: 10px 20px;
   border-radius: 50px;
-  cursor: pointer;
   border: 0;
-  box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
-  letter-spacing: 1.5px;
-  font-size: 15px;
+  cursor: pointer;
+  font-size: 25px;
   transition: all 0.5s ease;
 }
 
-.mute-button:hover {
-  box-shadow: #5432ed7e 0px 7px 29px 0px;
-}
-
-.unmute-button {
-  background-color: red;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  left: auto;
+.spotify-button:hover {
+  font-size: 30px;
+  background-color: #9afabb;
   color: white;
-  padding: 17px 40px;
-  border-radius: 50px;
-  cursor: pointer;
-  border: 0;
-  box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
-  letter-spacing: 1.5px;
-  font-size: 15px;
-  transition: all 0.5s ease;
+  box-shadow: #38da7166 0px 7px 29px 0px;
 }
 
-.unmute-button:hover {
-  box-shadow: rgba(255, 0, 0, 0.5) 0px 7px 29px 0px;
+.spotify-button:active {
+  transform: scale(0.9);
 }
+
 
 input {
   padding: 10px;
