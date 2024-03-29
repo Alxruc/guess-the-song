@@ -1,6 +1,8 @@
 import React from "react";
 
 function ScoreView(props) {
+  
+
   return (
     <div>
       <h2>Scores:</h2>
@@ -18,6 +20,10 @@ function ScoreView(props) {
           ))}
         </div>
       </div>
+
+      {props.guessingPlayer != "" && (
+        <h2>Currently guessing: {props.guessingPlayer}</h2>
+      )}
     </div>
   );
 }

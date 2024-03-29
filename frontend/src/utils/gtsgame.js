@@ -41,13 +41,13 @@ const Timer = ({ seconds, setStarted }) => {
 class GTSGame extends React.Component {
 
   componentDidMount() {
-    if (this.props.host) {
+    if (this.props.user.host) {
       this.props.play(this.props.song.uri);
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.songPlaying !== this.props.songPlaying && this.props.host) {
+    if (prevProps.songPlaying !== this.props.songPlaying && this.props.user.host) {
       if (this.props.songPlaying) {
         this.props.resumePlayer();
       } else {
@@ -60,7 +60,7 @@ class GTSGame extends React.Component {
     console.log("New guess");
     socket.emit("new guess", {
       gameId: this.props.gameid,
-      username: this.props.username,
+      username: this.props.user.username,
     });
     this.props.setSongPlaying(false);
   };
@@ -91,8 +91,8 @@ class GTSGame extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <ScoreView scores={this.props.scores}/>
-        {this.props.host ? (
+        <ScoreView scores={this.props.scores} guessingPlayer={this.props.guessingPlayer}/>
+        {this.props.user.host ? (
           <div>
             <h1>
               You've selected {this.props.song.name}! Waiting for other players
@@ -135,14 +135,13 @@ class GTSGame extends React.Component {
 const GTSWrapper = (props) => {
   const [started, setStarted] = useState(false);
   const [songPlaying, setSongPlaying] = useState(true);
-  const [guessingPlayer, setGuessingPlayer] = useState("");
   const [canGuess, setCanGuess] = useState(true);
 
   useEffect(() => {
     socket.on("player guessed", (data) => {
       console.log("Player guessed: " + data.username);
       setSongPlaying(false);
-      setGuessingPlayer(data.username);
+      props.setGuessingPlayer(data.username);
     });
   });
 
@@ -154,19 +153,23 @@ const GTSWrapper = (props) => {
       });
       setCanGuess(true);
       props.toggleComponentVisibility();
-      setGuessingPlayer("");
+      props.setGuessingPlayer("");
       setSongPlaying(true);
     });
   });
 
   useEffect(() => {
     socket.on("player wrong", (data) => {
-      if (data.username === props.username) {
+      if (data.username === props.user.username) {
         // if the player guessed wrong, they can't guess again until the next song
         setCanGuess(false);
       }
+      if(data.roundOver) {
+        props.toggleComponentVisibility();
+        setCanGuess(true);
+      }
       setSongPlaying(true);
-      setGuessingPlayer("");
+      props.setGuessingPlayer("");
     });
   });
 
@@ -178,7 +181,7 @@ const GTSWrapper = (props) => {
       // The host doesn't play, so they don't need a score
       if(!props.host) {
         initialScores = {
-          [props.username]: 0,
+          [props.user.username]: 0,
         };
       }
       props.opponentUserNames?.forEach((username) => {
@@ -195,11 +198,6 @@ const GTSWrapper = (props) => {
           {...props}
           songPlaying={songPlaying}
           setSongPlaying={setSongPlaying}
-          scores={props.scores}
-          setScores={props.setScores}
-          guessingPlayer={guessingPlayer}
-          togglePlayer={props.togglePlayer}
-          play={props.play}
           canGuess={canGuess}
         />
       ) : (
