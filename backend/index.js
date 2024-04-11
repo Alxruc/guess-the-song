@@ -13,6 +13,8 @@ const app = express();
 const frontendOrigin = FRONTEND_URL;
 const redirect_uri = "http://localhost:8000/callback"; // Your redirect uri
 
+// TODO Change receiving access token to something better than a global variable
+// Right now this is only temporary and to be used locally
 var access_token = "";
 
 const server = http.createServer(app);

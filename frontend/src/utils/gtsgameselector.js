@@ -178,8 +178,9 @@ class GTSGameSelector extends React.Component {
 
 
   toggleComponentVisibility = () => {
-    this.setState((prevState) => ({
-      isOtherComponentVisible: !prevState.isOtherComponentVisible,
+    console.log("Toggling component visibility");
+    this.setState(() => ({
+      isOtherComponentVisible: !this.state.isOtherComponentVisible,
     }));
   };
 
@@ -229,24 +230,23 @@ class GTSGameSelector extends React.Component {
     });
   }
   
-  render() {
-    const { isOtherComponentVisible, host, song, searchType, isListVisible, songList } = this.state;
-  
+  render() {  
     return (
       <React.Fragment>
-        {isOtherComponentVisible ? (
+        {this.state.isOtherComponentVisible ? (
           <GTSGame
             {...this.state}
             {...this.props}
+            toggleComponentVisibility={this.toggleComponentVisibility}
           />
-        ) : host ? (
+        ) : this.state.host ? (
           <div className="container">
             <h1> Search for a song! </h1>
             <label>
               <input
                 type="radio"
                 value="track"
-                checked={searchType === 'track'}
+                checked={this.state.searchType === 'track'}
                 onChange={this.handleSearchTypeChange}
               />
               Song Search
@@ -255,29 +255,29 @@ class GTSGameSelector extends React.Component {
               <input
                 type="radio"
                 value="playlist"
-                checked={searchType === 'playlist'}
+                checked={this.state.searchType === 'playlist'}
                 onChange={this.handleSearchTypeChange}
               />
               Playlist Search
             </label>
             <div>
-              {searchType === "playlist" ? (
-                <SubmitButton handleSubmit={this.handlePlaylistSubmit} song={songList} />
+              {this.state.searchType === "playlist" ? (
+                <SubmitButton handleSubmit={this.handlePlaylistSubmit} song={this.state.songList} />
               ) : (
-                <SubmitButton handleSubmit={this.handleTrackSubmit} song={song} />
+                <SubmitButton handleSubmit={this.handleTrackSubmit} song={this.state.song} />
               )}
             </div>
             <div>
               <input 
                 ref={this.userInput} 
-                placeholder={searchType === 'track' ? 'Search for a song...' : 'Enter a playlist URL...'}
+                placeholder={this.state.searchType === 'track' ? 'Search for a song...' : 'Enter a playlist URL...'}
                 />
             </div>
             <div className="container">
-              <SongList isListVisible={isListVisible} songList={songList} handleRowClick={this.handleRowClick} />
+              <SongList isListVisible={this.state.isListVisible} songList={this.state.songList} handleRowClick={this.handleRowClick} />
             </div>
             <div>
-              {searchType === "playlist" ? (
+              {this.state.searchType === "playlist" ? (
               <SearchButton handleSearch={this.handlePlaylistSearch} searchType={"playlist"} />
                 ):
               <SearchButton handleSearch={this.handleTrackSearch} searchType={"track"} />
@@ -328,7 +328,7 @@ const SelectorWrapper = (props) => {
         })
         .catch((error) => console.error("Error: ", error));
     }
-  })
+  }, [])
 
   useEffect(() => {
     const script = document.createElement("script");

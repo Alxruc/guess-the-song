@@ -85,7 +85,6 @@ class GTSGame extends React.Component {
       gameId: this.props.gameid,
       username: this.props.guessingPlayer,
     });
-    this.props.setSongPlaying(true);
   };
 
   render() {
@@ -165,11 +164,11 @@ const GTSWrapper = (props) => {
         setCanGuess(false);
       }
       if(data.roundOver) {
-        props.toggleComponentVisibility();
         setCanGuess(true);
+        props.toggleComponentVisibility();
       }
-      setSongPlaying(true);
       props.setGuessingPlayer("");
+      setSongPlaying(true); 
     });
   });
 

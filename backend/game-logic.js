@@ -63,7 +63,7 @@ function playerJoinsGame(idData) {
     }
     if(!idData.isHost) {
         // The host doesnt play
-        playersInGames[idData.gameId].push({ userName: idData.userName, socketId: socket.id, score: 0});
+        playersInGames[idData.gameId].push({ userName: idData.userName, socketId: socket.id, score: 0, canGuess: true});
     }
     
     const existingPlayers = getExistingPlayers(idData.gameId);
@@ -114,13 +114,26 @@ function correctGuess(idData) {
         // Increase the player's score
         player.score += 1;
     }
+    playersInGames[idData.gameId].forEach(player => player.canGuess = true); // reset all players to be able to guess again
     
     socket.broadcast.to(idData.gameId).emit('player correct', player);
 }
 
 function wrongGuess(idData) {
     var socket = this
-    socket.broadcast.to(idData.gameId).emit('player wrong', idData);
+    playersInGames[idData.gameId].find(player => player.userName == idData.username).canGuess = false;
+
+    var roundOver = playersInGames[idData.gameId].every(player => player.canGuess === false);
+    console.log(playersInGames[idData.gameId]);
+
+    // If all players have canGuess set to false, add a new property to idData
+    if (roundOver) {
+        console.log("Round over");
+        idData.roundOver = true;
+        playersInGames[idData.gameId].forEach(player => player.canGuess = true); // reset all players to be able to guess again
+    }
+
+    io.to(idData.gameId).emit('player wrong', idData);
 }
 
 module.exports = { initializeGame };
