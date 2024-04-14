@@ -14,7 +14,7 @@ const frontendOrigin = FRONTEND_URL;
 const redirect_uri = "http://localhost:8000/callback"; // Your redirect uri
 
 // TODO Change receiving access token to something better than a global variable
-// Right now this is only temporary and to be used locally
+// Right now this is only temporary and to be used locally for testing
 var access_token = "";
 
 const server = http.createServer(app);
@@ -125,7 +125,6 @@ app.get("/callback", function (req, res) {
 });
 
 app.get("/spotify-token", (req, res) => {
-  console.log("Sending token");
   if (!access_token || access_token === "") {
     res.status(400).json({ error: "Access token is not defined" });
   } else {

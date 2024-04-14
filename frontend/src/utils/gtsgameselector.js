@@ -307,6 +307,7 @@ const SelectorWrapper = (props) => {
   const [pausePlayer, setPausePlayer] = useState(null);
   const [guessingPlayer, setGuessingPlayer] = useState("");
   const [play, setPlay] = useState(null);
+  const [winner, setWinner] = useState("");
 
   // useEffect(() => {
   //   console.log("Fetching Spotify token");
@@ -328,7 +329,7 @@ const SelectorWrapper = (props) => {
         })
         .catch((error) => console.error("Error: ", error));
     }
-  }, [])
+  })
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -374,6 +375,12 @@ const SelectorWrapper = (props) => {
     setOpenNewWindow(false);
   }
 
+  const handleReset = () => {
+    setDidStart(false);
+    setWinner("");
+    setScores([]);
+  }
+
   const PlayerList = ({ opponentUserNames, isHost }) => (
     <div>
       <h2>
@@ -387,7 +394,17 @@ const SelectorWrapper = (props) => {
     <div>
       {didStart ? (
         <React.Fragment>
-          <GTSGameSelector
+          {winner !== "" ? (
+            <div>
+            <h1>Game over! {winner} wins!</h1>
+            {props.isHost && (
+              <button class="buzzer" onClick={handleReset}>
+                Reset
+              </button> // TODO
+            )}
+          </div>
+          ) : (
+            <GTSGameSelector
             user={{ accessToken, host: props.isHost, username: props.myUserName }}
             gameid={gameid}
             opponentUserNames={opponentUserNames}
@@ -398,14 +415,16 @@ const SelectorWrapper = (props) => {
             resumePlayer={resumePlayer}
             pausePlayer={pausePlayer}
             play={play}
+            setWinner={setWinner}
           />
+          )}
 
           <div>
             <button class="newWindowButton" onClick={handleOpenNewWindow}>Scores Only</button>
             {openNewWindow && (
               <NewWindow onUnload={handleCloseNewWindow}>
                 <div class="App">
-                  <ScoreView scores={scores} guessingPlayer={guessingPlayer}/>
+                  <ScoreView scores={scores} guessingPlayer={guessingPlayer} winner={winner}/>
                 </div>
               </NewWindow>
             )}

@@ -4,6 +4,8 @@ import ScoreView from "./scoreview";
 import "./styling/gtsgame.css";
 const socket = require("../connection/socket").socket;
 
+const winningScore = 5;
+
 
 const Timer = ({ seconds, setStarted }) => {
   // initialize timeLeft with the seconds prop
@@ -76,6 +78,9 @@ class GTSGame extends React.Component {
       [this.props.guessingPlayer]:
         this.props.scores[this.props.guessingPlayer] + 1,
     });
+    if(this.props.scores[this.props.guessingPlayer] === winningScore) {
+      this.props.setWinner(this.props.guessingPlayer);
+    }
     this.props.toggleComponentVisibility();
   };
 
@@ -94,7 +99,7 @@ class GTSGame extends React.Component {
         {this.props.user.host ? (
           <div>
             <h1>
-              You've selected {this.props.song.name}! Waiting for other players
+              You've selected {this.props.song.name} by {this.props.song.artists.map(artist => artist.name).join(", ")}! Waiting for other players
               to guess...
             </h1>
             {!this.props.songPlaying && (
@@ -150,6 +155,9 @@ const GTSWrapper = (props) => {
         ...props.scores,
         [player.userName]: player.score,
       });
+      if (player.score === winningScore) {
+        props.setWinner(player.userName);
+      }
       setCanGuess(true);
       props.toggleComponentVisibility();
       props.setGuessingPlayer("");

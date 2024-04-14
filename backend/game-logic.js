@@ -9,7 +9,6 @@ var gamesInSession = []
 // This object will hold the players for each game
 var playersInGames = [];
 
-
 const registerSocketEvents = (socket, events) => {
     Object.keys(events).forEach(event => {
         socket.on(event, events[event]);
@@ -128,7 +127,6 @@ function wrongGuess(idData) {
 
     // If all players have canGuess set to false, add a new property to idData
     if (roundOver) {
-        console.log("Round over");
         idData.roundOver = true;
         playersInGames[idData.gameId].forEach(player => player.canGuess = true); // reset all players to be able to guess again
     }
