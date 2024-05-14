@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
 import NewWindow from 'react-new-window';
 import GTSGame from "./gtsgame";
-import ScoreView from "./scoreview";
+import { ExternalView } from "./scoreview";
 import "./styling/songselectorstyle.css";
 import { BACKEND_URL } from "../config";
 import setupWebPlayer from "./webplayer";
@@ -182,6 +182,7 @@ class GTSGameSelector extends React.Component {
     this.setState(() => ({
       isOtherComponentVisible: !this.state.isOtherComponentVisible,
     }));
+    this.props.setGuessingPlayer("");
   };
 
   handleTrackSubmit = () => {
@@ -424,7 +425,7 @@ const SelectorWrapper = (props) => {
             {openNewWindow && (
               <NewWindow onUnload={handleCloseNewWindow}>
                 <div class="App">
-                  <ScoreView scores={scores} guessingPlayer={guessingPlayer} winner={winner}/>
+                  <ExternalView scores={scores} guessingPlayer={guessingPlayer} winner={winner}/>
                 </div>
               </NewWindow>
             )}

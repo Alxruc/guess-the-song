@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import ScoreView from "./scoreview";
+import { ScoreView } from "./scoreview";
 import "./styling/gtsgame.css";
 const socket = require("../connection/socket").socket;
 
