@@ -92,6 +92,16 @@ class GTSGame extends React.Component {
     });
   };
 
+  handleSkip = () => {
+    console.log("Skip");
+    socket.emit("skip", {
+      gameId: this.props.gameid,
+    });
+    this.props.setSongPlaying(false);
+    this.props.pausePlayer();
+    this.props.toggleComponentVisibility();
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -115,6 +125,11 @@ class GTSGame extends React.Component {
                 </button>
               </div>
             )}
+            <div>
+              <button class="btn btn-secondary" onClick={this.handleSkip}>
+                Skip
+              </button>
+            </div>
           </div>
         ) : (
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
@@ -161,7 +176,7 @@ const GTSWrapper = (props) => {
       setCanGuess(true);
       props.toggleComponentVisibility();
       props.setGuessingPlayer("");
-      setSongPlaying(true);
+      setSongPlaying(false);
     });
   });
 
@@ -179,6 +194,15 @@ const GTSWrapper = (props) => {
       setSongPlaying(true); 
     });
   });
+
+  useEffect(() => {
+    socket.on("song skip", () => {
+      setCanGuess(true);
+      props.toggleComponentVisibility();
+      props.setGuessingPlayer("");
+      setSongPlaying(false);
+    }
+  )});
 
   useEffect(() => {
     // Only initialize scores if they haven't been initialized yet

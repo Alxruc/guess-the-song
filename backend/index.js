@@ -11,7 +11,7 @@ require("dotenv").config();
 const app = express();
 
 const frontendOrigin = FRONTEND_URL;
-const redirect_uri = "http://localhost:8000/callback"; // Your redirect uri
+const redirect_uri = "http://192.168.0.74:8000/callback"; // Your redirect uri
 
 // TODO Change receiving access token to something better than a global variable
 // Right now this is only temporary and to be used locally for testing

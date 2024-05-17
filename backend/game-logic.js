@@ -37,7 +37,8 @@ const initializeGame = (sio, socket) => {
         "playerJoinGame": playerJoinsGame,
         "start game": startGame,
         "correct guess": correctGuess,
-        "wrong guess": wrongGuess
+        "wrong guess": wrongGuess,
+        "skip": songSkip
     };
 
     // Register the events
@@ -132,6 +133,12 @@ function wrongGuess(idData) {
     }
 
     io.to(idData.gameId).emit('player wrong', idData);
+}
+
+function songSkip(idData) {
+    var socket = this
+    playersInGames[idData.gameId].forEach(player => player.canGuess = true); // reset all players to be able to guess again
+    socket.broadcast.to(idData.gameId).emit('song skip');
 }
 
 module.exports = { initializeGame };
