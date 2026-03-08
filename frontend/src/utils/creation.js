@@ -3,7 +3,7 @@ import { PlayerContext } from "./context";
 import { Navigate } from 'react-router-dom'
 import { v4 as uuidv4 } from "uuid";
 import './styling/creation.css';
-const socket  = require('../connection/socket').socket
+const socket = require('../connection/socket').socket
 
 class CreateGame extends React.Component {
   state = {
@@ -36,16 +36,20 @@ class CreateGame extends React.Component {
       this.props.setDidRedirect(true);
     }
 
-    
+
   };
 
   send = () => {
     //Create new room with UUID (shortened to 8 characters for simplicity)
-    const newGameRoomId = uuidv4().substring(0,8);
-    
+    const newGameRoomId = uuidv4().substring(0, 8);
+
     this.setState({
       gameId: newGameRoomId,
     });
+
+    // Persist gameId and host flag so a refresh lands back in the lobby as host
+    sessionStorage.setItem("gts_gameId", newGameRoomId);
+    sessionStorage.setItem("gts_isHost", "true");
 
     socket.emit('createNewGame', newGameRoomId)
   };
@@ -68,17 +72,17 @@ class CreateGame extends React.Component {
         ) : (
           <div>
             <h3 class="creationTitle"> Create a lobby by entering your username! </h3>
-              <div class="container">
-                <input
-                  name="username-input"
-                  ref={this.userInput}
-                  onChange={this.handleInput}
-                  placeholder="Username"
-                ></input>
-                <button className="hoverButton" onClick={this.handleClick}>
-                  Set Username
-                </button>  
-              </div>
+            <div class="container">
+              <input
+                name="username-input"
+                ref={this.userInput}
+                onChange={this.handleInput}
+                placeholder="Username"
+              ></input>
+              <button className="hoverButton" onClick={this.handleClick}>
+                Set Username
+              </button>
+            </div>
           </div>
         )}
       </React.Fragment>

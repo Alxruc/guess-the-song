@@ -17,22 +17,36 @@ import { BACKEND_URL } from "./config.js";
 // Inspiration / Help from https://github.com/JackHeTech/multiplayer-chess-game throughout this project
 
 function App() {
-  const [name, setName] = React.useState("");
+  // Restore state from sessionStorage on mount (survives page refresh)
+  const [name, setNameState] = React.useState(
+    () => sessionStorage.getItem("gts_name") || ""
+  );
+  const [didRedirect, setDidRedirectState] = React.useState(
+    () => sessionStorage.getItem("gts_didRedirect") === "true"
+  );
 
-  const [didRedirect, setDidRedirect] = React.useState(false);
+  // Wrap setters so they also persist to sessionStorage
+  const setName = React.useCallback((newName) => {
+    sessionStorage.setItem("gts_name", newName);
+    setNameState(newName);
+  }, []);
+
+  const setDidRedirect = React.useCallback((value) => {
+    sessionStorage.setItem("gts_didRedirect", String(value));
+    setDidRedirectState(value);
+  }, []);
 
   const playerDidRedirect = React.useCallback(() => {
     setDidRedirect(true);
-  }, []);
+  }, [setDidRedirect]);
 
   const playerDidNotRedirect = React.useCallback(() => {
     setDidRedirect(false);
-  }, []);
+  }, [setDidRedirect]);
 
   const loginWithSpotify = () => {
     window.location.href = BACKEND_URL + "/spotify-login";
   };
-
 
   return (
     <div className="App">

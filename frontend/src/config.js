@@ -1,3 +1,3 @@
 module.exports = {
-    BACKEND_URL: "http://localhost:8000", // Replace with your backend
+    BACKEND_URL: "",  // Empty string = same origin (everything served from port 8000)
 };

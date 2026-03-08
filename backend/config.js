@@ -1,3 +1,4 @@
 module.exports = {
-    FRONTEND_URL: "http://localhost:3000", // Replace with your frontend
+    FRONTEND_URL: "http://[::1]:8000",
+    REDIRECT_URL: "http://[::1]:8000/callback"
 };

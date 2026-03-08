@@ -1,4 +1,7 @@
 const express = require("express");
+const path = require("path");
+const session = require("express-session");
+const { uuidv7: genuuid } = require('uuidv7');
 const http = require("http");
 const socketio = require("socket.io");
 const gameLogic = require("./game-logic");
@@ -6,16 +9,12 @@ const fetch = require("cross-fetch");
 const cors = require("cors");
 const axios = require("axios");
 const querystring = require("querystring");
-const { FRONTEND_URL } = require("./config");
+const { FRONTEND_URL, REDIRECT_URL } = require("./config");
 require("dotenv").config();
 const app = express();
 
 const frontendOrigin = FRONTEND_URL;
-const redirect_uri = "http://192.168.0.74:8000/callback"; // Your redirect uri
-
-// TODO Change receiving access token to something better than a global variable
-// Right now this is only temporary and to be used locally for testing
-var access_token = "";
+const redirect_uri = REDIRECT_URL; // Your redirect uri
 
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
@@ -30,12 +29,40 @@ io.on("connection", (client) => {
   gameLogic.initializeGame(io, client);
 });
 
+const sessionMiddleware = (session(
+  {
+    name: 'SessionCookie',
+    genid: function (req) {
+      id = genuuid()
+      console.log("Session ID " + id + " created");
+      return id;
+    },
+    secret: process.env.CLIENT_ID,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false,
+      maxAge: 2400000,  // 4 hours in milliseconds
+      httpOnly: true,
+      sameSite: false   // Allow cross-origin cookie (local dev only)
+    }
+  }
+));
+
 app.use(
   cors({
     origin: frontendOrigin,
     methods: ["GET", "POST"],
+    credentials: true //required for cookies
   })
 );
+
+
+app.use(sessionMiddleware);
+io.engine.use(sessionMiddleware);
+
+// Serve the React production build
+app.use(express.static(path.join(__dirname, "../frontend/build")));
 
 // Backup for if the user is not logged in, legacy code
 app.get(
@@ -74,13 +101,13 @@ app.get("/spotify-login", (req, res) => {
 
   res.redirect(
     "https://accounts.spotify.com/authorize?" +
-      querystring.stringify({
-        response_type: "code",
-        client_id: process.env.CLIENT_ID,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state,
-      })
+    querystring.stringify({
+      response_type: "code",
+      client_id: process.env.CLIENT_ID,
+      scope: scope,
+      redirect_uri: redirect_uri,
+      state: state,
+    })
   );
 });
 
@@ -91,9 +118,9 @@ app.get("/callback", async function (req, res) {
   if (state === null) {
     res.redirect(
       "/#" +
-        querystring.stringify({
-          error: "state_mismatch",
-        })
+      querystring.stringify({
+        error: "state_mismatch",
+      })
     );
     return;
   }
@@ -116,20 +143,27 @@ app.get("/callback", async function (req, res) {
       }
     );
 
-    console.log("Successfully set access token");
-    access_token = response.data.access_token;
-    res.redirect(frontendOrigin + "/success");
+    req.session.access_token = response.data.access_token
+    req.session.save((err) => {
+      if (err) console.error(err);
+      res.redirect(frontendOrigin + "/success");
+    });
   } catch (error) {
     console.error("Error fetching Spotify token:", error.response?.data || error.message);
   }
 });
 
 app.get("/spotify-token", (req, res) => {
-  if (!access_token || access_token === "") {
-    res.status(400).json({ error: "Access token is not defined" });
+  if (!req.session.access_token) {
+    res.status(400).json({ error: "Access token is not defined in this session" });
   } else {
-    res.json({ access_token });
+    res.json({ access_token: req.session.access_token });
   }
+});
+
+// Catch-all: serve React app for any unmatched route (client-side routing)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
 });
 
 const port = process.env.PORT || 8000;

@@ -145,11 +145,11 @@ class GTSGameSelector extends React.Component {
       // Check if userInput matches the first format
       if (regex1.test(userInput)) {
         id = userInput.match(regex1)[1];
-      } 
+      }
       // Check if userInput matches the second format
       else if (regex2.test(userInput)) {
         id = userInput.match(regex2)[1];
-      } 
+      }
       console.log("Getting playlist with ID: " + id);
 
       var playlistParams = {
@@ -171,10 +171,10 @@ class GTSGameSelector extends React.Component {
           });
           console.log("Got playlist containing tracks: " + data.items.map((item) => item.track.name));
         });
-      }
-    };
+    }
+  };
 
-      
+
 
 
   toggleComponentVisibility = () => {
@@ -202,7 +202,7 @@ class GTSGameSelector extends React.Component {
   };
 
   handlePlaylistSubmit = () => {
-    if(this.state.songList) {
+    if (this.state.songList) {
       // randomly select a song from the song list
       const randomIndex = Math.floor(Math.random() * this.state.songList.length);
       const song = this.state.songList[randomIndex];
@@ -230,8 +230,8 @@ class GTSGameSelector extends React.Component {
       isListVisible: false,
     });
   }
-  
-  render() {  
+
+  render() {
     return (
       <React.Fragment>
         {this.state.isOtherComponentVisible ? (
@@ -269,20 +269,20 @@ class GTSGameSelector extends React.Component {
               )}
             </div>
             <div>
-              <input 
-                ref={this.userInput} 
+              <input
+                ref={this.userInput}
                 placeholder={this.state.searchType === 'track' ? 'Search for a song...' : 'Enter a playlist URL...'}
-                />
+              />
             </div>
             <div className="container">
               <SongList isListVisible={this.state.isListVisible} songList={this.state.songList} handleRowClick={this.handleRowClick} />
             </div>
             <div>
               {this.state.searchType === "playlist" ? (
-              <SearchButton handleSearch={this.handlePlaylistSearch} searchType={"playlist"} />
-                ):
-              <SearchButton handleSearch={this.handleTrackSearch} searchType={"track"} />
-              } 
+                <SearchButton handleSearch={this.handlePlaylistSearch} searchType={"playlist"} />
+              ) :
+                <SearchButton handleSearch={this.handleTrackSearch} searchType={"track"} />
+              }
             </div>
           </div>
         ) : (
@@ -321,8 +321,8 @@ const SelectorWrapper = (props) => {
   // }, []);
 
   useEffect(() => {
-    if(props.isHost) {
-      fetch(BACKEND_URL + "/spotify-token")
+    if (props.isHost) {
+      fetch(BACKEND_URL + "/spotify-token", { credentials: "include" })
         .then((response) => response.json())
         .then((data) => {
           setAccessToken(data.access_token);
@@ -339,7 +339,7 @@ const SelectorWrapper = (props) => {
     document.body.appendChild(script);
 
     setupWebPlayer(accessToken)
-      .then(({resumePlayer, pausePlayer, play}) => {
+      .then(({ resumePlayer, pausePlayer, play }) => {
         setResumePlayer(() => resumePlayer);
         setPausePlayer(() => pausePlayer);
         setPlay(() => play);
@@ -386,7 +386,7 @@ const SelectorWrapper = (props) => {
     <div>
       <h2>
         Current {isHost ? 'players' : 'opponents'}:{" "}
-        {opponentUserNames && opponentUserNames.length > 1 && opponentUserNames.join(", ")}
+        {opponentUserNames && opponentUserNames.length > 0 && opponentUserNames.join(", ")}
       </h2>
     </div>
   );
@@ -397,27 +397,27 @@ const SelectorWrapper = (props) => {
         <React.Fragment>
           {winner !== "" ? (
             <div>
-            <h1>Game over! {winner} wins!</h1>
-            {props.isHost && (
-              <button class="buzzer" onClick={handleReset}>
-                Reset
-              </button> // TODO
-            )}
-          </div>
+              <h1>Game over! {winner} wins!</h1>
+              {props.isHost && (
+                <button class="buzzer" onClick={handleReset}>
+                  Reset
+                </button> // TODO
+              )}
+            </div>
           ) : (
             <GTSGameSelector
-            user={{ accessToken, host: props.isHost, username: props.myUserName }}
-            gameid={gameid}
-            opponentUserNames={opponentUserNames}
-            scores={scores}
-            setScores={setScores}
-            setGuessingPlayer={setGuessingPlayer}
-            guessingPlayer={guessingPlayer}
-            resumePlayer={resumePlayer}
-            pausePlayer={pausePlayer}
-            play={play}
-            setWinner={setWinner}
-          />
+              user={{ accessToken, host: props.isHost, username: props.myUserName }}
+              gameid={gameid}
+              opponentUserNames={opponentUserNames}
+              scores={scores}
+              setScores={setScores}
+              setGuessingPlayer={setGuessingPlayer}
+              guessingPlayer={guessingPlayer}
+              resumePlayer={resumePlayer}
+              pausePlayer={pausePlayer}
+              play={play}
+              setWinner={setWinner}
+            />
           )}
 
           <div>
@@ -425,7 +425,7 @@ const SelectorWrapper = (props) => {
             {openNewWindow && (
               <NewWindow onUnload={handleCloseNewWindow}>
                 <div class="App">
-                  <ExternalView scores={scores} guessingPlayer={guessingPlayer} winner={winner}/>
+                  <ExternalView scores={scores} guessingPlayer={guessingPlayer} winner={winner} />
                 </div>
               </NewWindow>
             )}
@@ -442,7 +442,7 @@ const SelectorWrapper = (props) => {
           <div>
             {props.isHost &&
               opponentSocketIDs &&
-              opponentSocketIDs.length > 1 && (
+              opponentSocketIDs.length > 0 && (
                 <button
                   className="hoverButton"
                   onClick={() => {
